@@ -12,11 +12,11 @@ void VisionBase::init()
 
   
   leftMotor.initDirectionForward(HIGH);
-  leftMotor.initPins(rightMotorEnablePin, leftMotorDirectionPin, rightMotorStepPin);
+  leftMotor.initPins(MotorEnablePin, leftMotorDirectionPin, MotorStepPin);
   
   rightMotor.init();
   rightMotor.initDirectionForward(LOW);
-  rightMotor.initPins(rightMotorEnablePin, rightMotorDirectionPin, rightMotorStepPin);
+  rightMotor.initPins(MotorEnablePin, rightMotorDirectionPin, MotorStepPin);
   rightMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
   rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);  
   

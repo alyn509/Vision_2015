@@ -4,8 +4,8 @@
 #include "Arduino.h"
 #include "VisionStepper.h"
 #include "VisionSensor.h"
-#include "pins_little_robot.h"
-#include "little_robot_constants.h"
+#include "pins.h"
+#include "constants.h"
 #include <elapsedMillis.h>
 #include <Servo.h>
 

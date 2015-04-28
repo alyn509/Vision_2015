@@ -1,4 +1,4 @@
-  #include "VisionStepper.h"
+#include "VisionStepper.h"
 
 // motorState states
 #define STARTING 0
