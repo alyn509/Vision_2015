@@ -1,8 +1,7 @@
-#ifndef VisionSensorsDevices_h
-#define VisionSensorsDevices_h
+#ifndef VisionEncoders_h
+#define VisionEncoders_h
 
 #include "Arduino.h"
-#include "VisionSensor.h"
 #include <elapsedMillis.h>
 
 class VisionEncoders {
