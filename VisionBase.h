@@ -4,16 +4,17 @@
 #include "Arduino.h"
 #include "VisionStepper.h"
 #include "VisionSensor.h"
+#include "VisionEncoders.h"
 #include "pins.h"
 #include "constants.h"
 #include <elapsedMillis.h>
 #include <Servo.h>
 
-#define NONE 0
-#define FRONT 1
-#define BACK 2
-#define LEFT 3
-#define RIGHT 4
+#define NONE 4
+#define FRONT 3
+#define BACK 0
+#define LEFT 1
+#define RIGHT 2
 
 class VisionBase {
   public:
@@ -22,27 +23,40 @@ class VisionBase {
     elapsedMillis sensorToggleTimer;
     void setStartDelays(unsigned long startDelay);
     void setTacticDelays(int tactic);
+    
     void moveForward(float distance, unsigned long step_delay);
     void moveBackward(float distance, unsigned long step_delay);
+    
     boolean frontDetected();
-    //boolean leftDetected();
-    //boolean rightDetected();
-    boolean backDetected();
+    
     void checkObstructions();
     void turnLeft(int angle);
     void turnRight(int angle);
+    
     void pause();
     void unpause();
     void stopNow();
     void doLoop();
+    
+    bool leftMotorDir();
+    bool rightMotorDir();
+    
     void setSpecial();
     void resetSpecial();
+    
     boolean isStopped();
     boolean isPaused();
-    float getDistanceMadeSoFar();
+    
+    float getDistanceMadeSoFar();    
+    
+    void update();
+    
   public:
     VisionStepper leftMotor, rightMotor;
-    VisionSensor backLeft, backRight, backLow, frontLeft, frontFront, frontRight;
+    VisionEncoders leftEncoder, rightEncoder;
+    
+    VisionSensor frontSensor;
+    
     int directionMovement;
     boolean oppositeSide;
     boolean ignoredSensors;
