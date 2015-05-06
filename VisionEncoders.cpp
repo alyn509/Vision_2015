@@ -13,16 +13,11 @@ long VisionEncoders::getPosition()
    return currentPosition;
 } 
 
-void VisionEncoders::updatePosition(bool dir) 
+void VisionEncoders::updatePosition() 
 { 
    int currentState = digitalRead(stepPin);
    if (lastState != currentState) 
-   {
-     if (dir == LOW) 
-       currentPosition--;
-     else
        currentPosition++;
-   } 
    lastState = currentState;
 } 
 

@@ -47,7 +47,8 @@ class VisionBase {
     boolean isStopped();
     boolean isPaused();
     
-    float getDistanceMadeSoFar();    
+    float getDistanceMadeSoFar();
+    float encoderValue(float value);    
     
     void update();
     
@@ -61,6 +62,9 @@ class VisionBase {
     boolean oppositeSide;
     boolean ignoredSensors;
     boolean obstructionDetected;
+    
+    float lastPositionLeft = 0;
+    float lastPositionRight = 0;
 };
 
 #endif

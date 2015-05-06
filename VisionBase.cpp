@@ -40,6 +40,8 @@ void VisionBase::moveForward(float distance, unsigned long step_delay)
   leftMotor.setDirectionForward();
   rightMotor.setDirectionForward();
   rightMotor.doDistanceInCm(distance);
+  lastPositionLeft = leftEncoder.getPosition();
+  lastPositionRight = rightEncoder.getPosition();
 }
 
 void VisionBase::moveBackward(float distance, unsigned long step_delay)
@@ -49,6 +51,8 @@ void VisionBase::moveBackward(float distance, unsigned long step_delay)
   leftMotor.setDirectionBackward();
   rightMotor.setDirectionBackward();  
   rightMotor.doDistanceInCm(distance);
+  lastPositionLeft = leftEncoder.getPosition();
+  lastPositionRight = rightEncoder.getPosition();
 }
 
 void VisionBase::turnLeft(int angle)
@@ -58,6 +62,8 @@ void VisionBase::turnLeft(int angle)
   leftMotor.setDirectionBackward();
   rightMotor.setDirectionForward();
   rightMotor.doRotationInAngle(angle); 
+  lastPositionLeft = leftEncoder.getPosition();
+  lastPositionRight = rightEncoder.getPosition();
 }
 
 void VisionBase::turnRight(int angle)
@@ -67,6 +73,8 @@ void VisionBase::turnRight(int angle)
   leftMotor.setDirectionForward();
   rightMotor.setDirectionBackward();
   rightMotor.doRotationInAngle(angle);
+  lastPositionLeft = leftEncoder.getPosition();
+  lastPositionRight = rightEncoder.getPosition();
 }
 
 bool VisionBase::leftMotorDir()
@@ -124,6 +132,9 @@ void VisionBase::checkObstructions()
 void VisionBase::doLoop()
 {
   rightMotor.doLoop();
+  
+  leftEncoder.updatePosition();
+  rightEncoder.updatePosition();
 }
 
 void VisionBase::stopNow()
@@ -136,14 +147,16 @@ float VisionBase::getDistanceMadeSoFar()
   return rightMotor.getDistanceMadeSoFar();
 }
 
-void VisionBase::update()
+float VisionBase::encoderValue(float value)
 {
-  leftEncoder.updatePosition(leftMotorDir());
-  rightEncoder.updatePosition(rightMotorDir());
-  
+  return (value * PI * wheelDiameter) / encoderResolution;
+}
+
+void VisionBase::update()
+{  
   int admittedError = 5;
-  int leftError = leftEncoder.getPosition() - leftMotor.getDistanceMadeSoFar();
-  int rightError = rightEncoder.getPosition() - rightMotor.getDistanceMadeSoFar();
+  int leftError = encoderValue(lastPositionLeft - leftEncoder.getPosition()) - leftMotor.getDistanceMadeSoFar();
+  int rightError = encoderValue(lastPositionRight - rightEncoder.getPosition()) - rightMotor.getDistanceMadeSoFar();
   
   if (abs(leftError) > admittedError)
   {

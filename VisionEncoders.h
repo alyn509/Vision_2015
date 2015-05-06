@@ -13,7 +13,7 @@ class VisionEncoders {
   public:
       void init(int pinStep);
       long getPosition();  
-      void updatePosition(bool dir);  // dir = 1 - forward |  dir = 0 - backward
+      void updatePosition();  // dir = 1 - forward |  dir = 0 - backward
       int getTraveledLength();
 };
 
