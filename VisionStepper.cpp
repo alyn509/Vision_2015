@@ -93,8 +93,7 @@ void VisionStepper::setTacticDelays(int tactic)
     case FAST_START:
       stepSpeedCounterAcceleration = 40;
       stepSpeedCounterSlowing = 30;
-      break;
-      
+      break;      
   }
 }
 
@@ -248,6 +247,10 @@ float VisionStepper::getDistanceMadeSoFar()
 {
   return stepsMadeSoFar / stepCmRatio;
 }
+float VisionStepper::getDistanceRemainedToDo()
+{
+  return stepsRemaining / stepCmRatio;
+}
 float VisionStepper::computeSpeed()
 {
   return startSpeedDelay * 10 / sqrt(1 * stepSpeedCounter + 100);
@@ -315,7 +318,10 @@ void VisionStepper::doSteps(unsigned long stepNumber)
 {
   stepsMadeSoFar = 0;
   stepsRemaining = stepNumber;
-  motorState = STARTING;
+  if(motorState != RUNNING)
+  {    
+    motorState = STARTING;
+  }
 }
 
 void VisionStepper::doDistanceInCm(float distance)

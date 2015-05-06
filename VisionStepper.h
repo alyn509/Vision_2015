@@ -39,6 +39,7 @@
       void setSpecial();
       void resetSpecial();
       float getDistanceMadeSoFar();
+      float getDistanceRemainedToDo();
     private:
       void doSetup();
       float computeSpeed();

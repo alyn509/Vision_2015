@@ -47,7 +47,8 @@ void loop()
   switch (state)
   {  
     default:
-      state.doLoop();
+      state.doLoop();       
+      base.update();
   }
   if(!stoppedEverything)
   {

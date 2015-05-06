@@ -140,16 +140,22 @@ void VisionBase::update()
 {
   leftEncoder.updatePosition(leftMotorDir());
   rightEncoder.updatePosition(rightMotorDir());
-  if (rightEncoder.getPosition() == 90)  // actually 100
+  
+  int admittedError = 5;
+  int leftError = leftEncoder.getPosition() - leftMotor.getDistanceMadeSoFar();
+  int rightError = rightEncoder.getPosition() - rightMotor.getDistanceMadeSoFar();
+  
+  if (abs(leftError) > admittedError)
   {
     leftEncoder.currentPosition = 0;
-    leftMotor.doDistanceInCm(0);
+    leftMotor.doDistanceInCm(leftMotor.getDistanceRemainedToDo() + leftError);
   }
-  if (rightEncoder.getPosition() == 90)  // actually 100
+  if (abs(rightError) > admittedError)
   {
     rightEncoder.currentPosition = 0;
-    rightMotor.doDistanceInCm(0);
+    rightMotor.doDistanceInCm(rightMotor.getDistanceRemainedToDo() + rightError);
   }
+  /*
   int integral, last;
   if(directionMovement == FRONT)
   {
@@ -162,6 +168,8 @@ void VisionBase::update()
     if (turn < -30) turn = -30;
     leftMotor.doDistanceInCm(80 + turn);
     rightMotor.doDistanceInCm(80 - turn);
+    */
+    
     /*Serial.print("dif: ");
     Serial.print(difference);
     Serial.print(" int: ");
@@ -169,6 +177,6 @@ void VisionBase::update()
     Serial.print(" deriv: ");
     Serial.print(deriv);
     Serial.print(" turn: ");
-    Serial.println(turn);*/
-  }
+    Serial.println(turn);
+  }*/
 }
