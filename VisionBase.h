@@ -9,6 +9,7 @@
 #include "constants.h"
 #include <elapsedMillis.h>
 #include <Servo.h>
+#include <PID_v1.h>
 
 #define NONE 4
 #define FRONT 3
@@ -21,8 +22,6 @@ class VisionBase {
     void init();
     Servo sensorScanner;
     elapsedMillis sensorToggleTimer;
-    void setStartDelays(unsigned long startDelay);
-    void setTacticDelays(int tactic);
     
     void moveForward(float distance, unsigned long step_delay);
     void moveBackward(float distance, unsigned long step_delay);
@@ -38,12 +37,6 @@ class VisionBase {
     void stopNow();
     void doLoop();
     
-    bool leftMotorDir();
-    bool rightMotorDir();
-    
-    void setSpecial();
-    void resetSpecial();
-    
     boolean isStopped();
     boolean isPaused();
     
@@ -58,14 +51,10 @@ class VisionBase {
     
     VisionSensor frontSensor;
     
-    int directionMovement;
-    int last, integral;
-    boolean oppositeSide;
+
+    
     boolean ignoredSensors;
     boolean obstructionDetected;
-    
-    float lastPositionLeft = 0;
-    float lastPositionRight = 0;
 };
 
 #endif

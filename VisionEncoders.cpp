@@ -6,7 +6,7 @@ void VisionEncoders::init(int pinStep)
 { 
    stepPin = pinStep;
    pinMode(stepPin,INPUT_PULLUP);
-} 
+}
 
 long VisionEncoders::getPosition() 
 { 
@@ -21,11 +21,10 @@ void VisionEncoders::updatePosition()
        currentPosition++;
        lastState = currentState;
    }
-} 
-
-int VisionEncoders::getTraveledLength()
-{
-   int traveled = currentPosition - lastReadPosition;
-   lastReadPosition = currentPosition;
-   return traveled;
 }
+
+void VisionEncoders::reset()
+{
+  currentPosition = 0;
+}
+

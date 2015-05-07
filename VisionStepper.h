@@ -18,7 +18,6 @@
       void initPins(int enablePin, int directionPin, int stepPin);
       void initDirectionForward(boolean forward);
       void initDelays(unsigned long startSpeedDelay, unsigned long highPhaseDelay, unsigned long maxSpeedDelay, unsigned long pauseSpeedDelay);
-      void setTacticDelays(int tactic);
       void initSizes(float wheelDiameter, int wheelRevolutionSteps, float distanceBetweenWheels);
       void initStepCmRatio(float stepCmRatio);
       void doLoop();
@@ -26,6 +25,7 @@
       void setDirectionForward();
       void setDirectionBackward();
       void setTargetDelay(unsigned long targetDelay);
+      void setSpeed(double speed);
       boolean isOff();
       boolean isPaused();
       boolean isAtTargetSpeed();
@@ -51,7 +51,6 @@
       float startSpeedDelay, currentDelay, targetDelay, pauseSpeedDelay, delayBeforeTurnOff, highPhaseDelay, savedWhenPausingDelay, savedDeacceleration;
       int old_state;
       elapsedMicros stepTimer;
-      elapsedMillis stopTimer, pauseTurnOff;
       boolean special;
       
       float stepCmRatio; // steps for a cm

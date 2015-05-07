@@ -1,8 +1,8 @@
 #include <elapsedMillis.h>
 #include <Stepper.h>
 #include <LiquidCrystal.h>
-//#include <TimerThree.h>
-#include <Servo.h> 
+#include <Servo.h>
+#include <PID_v1.h>
 #include "VisionStepper.h"
 #include "VisionBase.h"
 #include "VisionDevices.h"
@@ -21,18 +21,18 @@ elapsedMillis enemyTimer, enemyThere;
 boolean stoppedEverything = true; 
 
 VisionState state;
-int team_color;
 float distanceToDo = 0;
+
+#define YELLOW_START_STATE 0
+#define GREEN_START_STATE 200
+#define HOMOLOGATION 400
 
 void setup()
 { 
   //Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
-  //devices.init();
-  team_color = base.oppositeSide ? 20 : 0;
-  team_color = (team_color == HOMOLOGATION) ? 0 : team_color;
-  state.wait(100, 0);
+  state.wait(100, YELLOW_START_STATE);
   stoppedEverything = false;
 }
 

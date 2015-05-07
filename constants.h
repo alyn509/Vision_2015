@@ -1,15 +1,7 @@
 #ifndef little_robot_constants_h
 #define little_robot_constants_h
 
-const unsigned long defaultStartSpeedDelay = 50000L;
-const unsigned long pauseSpeedDelay = 50000L;
-const unsigned long highPhaseDelay = 50;
 const unsigned long delayBeforeTurnOff = 500;
-
-const unsigned long slowSpeedDelay = 7000;
-const unsigned long fastSpeedDelay = 200;
-const unsigned long mediumSpeedDelay = 3000;
-const unsigned long ultraSlowSpeedDelay = 100000L;
 
 const float wheelDiameter = 12;
 const float distanceBetweenWheels = 33.4; //valoare interioara

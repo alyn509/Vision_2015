@@ -67,15 +67,6 @@ void VisionStepper::initPins(int enablePin, int directionPin, int stepPin)
   digitalWrite(stepPin, stepPinState);
 }
 
-void VisionStepper::initDelays(unsigned long startSpeedDelay, unsigned long highPhaseDelay, unsigned long pauseSpeedDelay, unsigned long delayBeforeTurnOff)
-{
-  this->startSpeedDelay = startSpeedDelay;
-  this->highPhaseDelay = highPhaseDelay;
-  this->pauseSpeedDelay = pauseSpeedDelay;
-  this->delayBeforeTurnOff = delayBeforeTurnOff;
-  currentDelay = startSpeedDelay;
-}
-
 void VisionStepper::initSizes(float wheelDiameter, int wheelRevolutionSteps, float distanceBetweenWheels)
 { 
   float wheelCircumference = wheelDiameter * PI;
@@ -88,6 +79,23 @@ void VisionStepper::initSizes(float wheelDiameter, int wheelRevolutionSteps, flo
 void VisionStepper::initStepCmRatio(float stepCmRatio)
 {
   this->stepCmRatio = stepCmRatio;
+}
+
+void VisionStepper::setSpeed(double speed)
+{
+  if (speed == 0)
+  {
+    stepState = STOP;
+    return;
+  }
+  if (speed < 0)
+  {
+    speed = -speed;
+    setDirectionBackward();
+  }
+  else
+    setDirectionForward();
+  currentDelay = 1.0 / speed;
 }
 
 void VisionStepper::doLoop()
@@ -105,6 +113,14 @@ void VisionStepper::doLoop()
       digitalWrite(stepPin, stepPinState);
       stepState.waitMicros(highPhaseDelay, STEP_LOW);
       break;
+    case STOPPING:
+      stepState.wait(20, STOP);
+      break;
+    case STOP:
+      enablePinState = LOW;
+      digitalWrite(enablePin, enablePinState);
+      stepState = STATE_STOP;
+      break;
     default:
       stepState.doLoop();
   }
@@ -120,19 +136,17 @@ float VisionStepper::getDistanceRemainedToDo()
 
 void VisionStepper::pause()
 {
-  if (motorState == RUNNING || motorState == STOPPING)
-    motorState = PAUSING_SLOWING;
+  stopNow();
 }
 
 void VisionStepper::unpause()
 {
-  if (motorState == PAUSING_SLOWING || motorState == PAUSING || motorState == PAUSED)
-    motorState = RESUME;
+  stepState = STEP_LOW;
 }
 
 void VisionStepper::stopNow()
 {
-  motorState = STOPPING;
+  stepState = STATE_STOP;
 }
 
 void VisionStepper::setTargetDelay(unsigned long targetDelay)
@@ -145,12 +159,12 @@ void VisionStepper::setTargetDelay(unsigned long targetDelay)
 
 boolean VisionStepper::isOff()
 {
-  return motorState == STOPPED;
+  return stepState == STATE_STOP;
 }
 
 boolean VisionStepper::isPaused()
 {
-  return ((motorState == PAUSING_SLOWING) || (motorState == PAUSING) || (motorState == PAUSED));
+  return isOff;
 }
 
 void VisionStepper::setDirectionForward()
@@ -169,31 +183,6 @@ void VisionStepper::toggleDirection()
 {
   directionPinState = !directionPinState;
   digitalWrite(directionPin, directionPinState);
-}
-
-boolean VisionStepper::isAtTargetSpeed()
-{
-  return motorState == RUNNING;
-}
-
-void VisionStepper::doSteps(unsigned long stepNumber)
-{
-  stepsMadeSoFar = 0;
-  stepsRemaining = stepNumber;
-  if(motorState != RUNNING)
-  {    
-    motorState = STARTING;
-  }
-}
-
-void VisionStepper::doDistanceInCm(float distance)
-{
-  doSteps(distance * stepCmRatio);
-}
-
-void VisionStepper::doRotationInAngle(float angle)
-{
-  doSteps(angle * degreeStepRatio);
 }
 
 
