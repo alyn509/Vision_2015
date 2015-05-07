@@ -6,13 +6,13 @@
 
 class VisionEncoders {
   public:    
-     long currentPosition = 0;
-     long lastReadPosition = 0;
+     double currentPosition = 0;
+     double lastReadPosition = 0;
      int lastState = LOW;
-     int stepPin;
+     int stepPin, bpin;
   public:
-      void init(int pinStep);
-      long getPosition();  
+      void init(int pinStep, int bpin);
+      double getPosition();  
       void updatePosition();
       void reset();
 };

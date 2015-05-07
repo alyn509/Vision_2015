@@ -2,7 +2,7 @@
 
 void VisionBase::init()
 {
-  frontSensor.initPin(frontLeftSensorPin);
+  frontSensor.initPin(frontSensorPin);
     
   leftMotor.initDirectionForward(HIGH);
   leftMotor.initPins(MotorEnablePin, leftMotorDirectionPin, MotorStepPin);
@@ -12,12 +12,11 @@ void VisionBase::init()
   rightMotor.initPins(MotorEnablePin, rightMotorDirectionPin, MotorStepPin);
   rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
   
-  leftEncoder.init(leftEncoderStepPin);
-  rightEncoder.init(rightEncoderStepPin);
+  leftEncoder.init(leftEncoderStepPin, leftEncoderBPin);
+  rightEncoder.init(rightEncoderStepPin, rightEncoderBPin);
   
   obstructionDetected = false;
   ignoredSensors = false;
-  pinMode(colorRedPin, INPUT);
 }
 
 void VisionBase::moveForward(float distance, unsigned long step_delay)
@@ -78,6 +77,7 @@ double turnErrorInput, turnOutput, turnErrorTarget;
 PID turnPID(&turnErrorInput, &turnOutput, &turnErrorTarget,2,5,1, DIRECT);
 double speedInput, speedOutput, speedTarget;
 PID speedPID(&speedInput, &speedOutput, &speedTarget,2,5,1, DIRECT);
+
 void VisionBase::doLoop()
 {
   rightMotor.doLoop();

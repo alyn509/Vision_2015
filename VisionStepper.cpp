@@ -164,7 +164,7 @@ boolean VisionStepper::isOff()
 
 boolean VisionStepper::isPaused()
 {
-  return isOff;
+  return isOff();
 }
 
 void VisionStepper::setDirectionForward()
