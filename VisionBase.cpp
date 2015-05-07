@@ -5,11 +5,11 @@ void VisionBase::init()
   frontSensor.initPin(frontSensorPin);
     
   leftMotor.initDirectionForward(HIGH);
-  leftMotor.initPins(MotorEnablePin, leftMotorDirectionPin, MotorStepPin);
+  leftMotor.initPins(leftMotorEnablePin, leftMotorDirectionPin, leftMotorStepPin);
   
   rightMotor.init();
   rightMotor.initDirectionForward(LOW);
-  rightMotor.initPins(MotorEnablePin, rightMotorDirectionPin, MotorStepPin);
+  rightMotor.initPins(rightMotorEnablePin, rightMotorDirectionPin, rightMotorStepPin);
   rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
   
   leftEncoder.init(leftEncoderStepPin, leftEncoderBPin);

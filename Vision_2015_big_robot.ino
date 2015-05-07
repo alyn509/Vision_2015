@@ -5,7 +5,6 @@
 #include <PID_v1.h>
 #include "VisionStepper.h"
 #include "VisionBase.h"
-#include "VisionDevices.h"
 #include "VisionState.h"
 #include "VisionEncoders.h"
 #include "pins.h"
@@ -14,7 +13,6 @@
 #define NINETYSECONDS 89000L
 
 VisionBase base;
-VisionDevices devices;
 elapsedMillis timeUpTimer;
 elapsedMillis extra;
 elapsedMillis enemyTimer, enemyThere;
