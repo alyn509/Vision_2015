@@ -68,7 +68,7 @@ void VisionBase::turnLeft(int angle)
 
 void VisionBase::turnRight(int angle)
 {  
-  directionMovement = RIGHT;    
+  directionMovement = RIGHT;
   rightMotor.setTargetDelay(5000);
   leftMotor.setDirectionForward();
   rightMotor.setDirectionBackward();
@@ -85,16 +85,6 @@ bool VisionBase::leftMotorDir()
 bool VisionBase::rightMotorDir()
 {  
   return directionMovement % 2;
-}
-
-void VisionBase::setSpecial()
-{
-  rightMotor.setSpecial();
-}
-
-void VisionBase::resetSpecial()
-{
-  rightMotor.resetSpecial();
 }
 
 void VisionBase::pause()
@@ -153,25 +143,7 @@ float VisionBase::encoderValue(float value)
 }
 
 void VisionBase::update()
-{  
-  int admittedError = 5;
-  int leftError = encoderValue(lastPositionLeft - leftEncoder.getPosition()) - leftMotor.getDistanceMadeSoFar();
-  int rightError = encoderValue(lastPositionRight - rightEncoder.getPosition()) - rightMotor.getDistanceMadeSoFar();
-  
-  if (abs(leftError) > admittedError)
-  {
-    leftEncoder.currentPosition = 0;
-    leftMotor.doDistanceInCm(leftMotor.getDistanceRemainedToDo() + leftError);
-  }
-  if (abs(rightError) > admittedError)
-  {
-    rightEncoder.currentPosition = 0;
-    rightMotor.doDistanceInCm(rightMotor.getDistanceRemainedToDo() + rightError);
-  }
-  /*
-  int integral, last;
-  if(directionMovement == FRONT)
-  {
+{
     int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
     int deriv = difference - last;
     last = difference;
@@ -181,7 +153,6 @@ void VisionBase::update()
     if (turn < -30) turn = -30;
     leftMotor.doDistanceInCm(80 + turn);
     rightMotor.doDistanceInCm(80 - turn);
-    */
     
     /*Serial.print("dif: ");
     Serial.print(difference);

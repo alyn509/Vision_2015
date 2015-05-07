@@ -36,8 +36,6 @@
       void setMaxSpeed();
       void pause();
       void unpause();
-      void setSpecial();
-      void resetSpecial();
       float getDistanceMadeSoFar();
       float getDistanceRemainedToDo();
     private:

@@ -1,7 +1,7 @@
 #include <elapsedMillis.h>
 #include <Stepper.h>
 #include <LiquidCrystal.h>
-#include <TimerThree.h>
+//#include <TimerThree.h>
 #include <Servo.h> 
 #include "VisionStepper.h"
 #include "VisionBase.h"
@@ -11,7 +11,7 @@
 #include "pins.h"
 #include "constants.h"
 
-#define NINETYSECONDS 39000L
+#define NINETYSECONDS 89000L
 
 VisionBase base;
 VisionDevices devices;
@@ -37,33 +37,28 @@ void setup()
 }
 
 void loop()
-{ 
-  /*while(1)
-  {
-    Serial.print(base.frontDetected());
-    Serial.print("             ");
-    Serial.println(base.backDetected());
-  }*/
+{
   switch (state)
-  {  
-    default:
-      state.doLoop();       
+  {
+    case 0:
       base.update();
+      state.waitMicros(10000,0);
+      break;
+    default:
+      state.doLoop();
   }
   if(!stoppedEverything)
   {
     base.checkObstructions();
     base.doLoop();
   }
-    testIfTimeUp();
+  testIfTimeUp();
 }
 
 void testIfTimeUp()
 {
-  if(timeUpTimer == NINETYSECONDS)
+  if(timeUpTimer >= NINETYSECONDS)
     timeIsUpStopEverything();
-  //if(timeUpTimer > NINETYSECONDS && extra == 1200) 
-  
 }
 
 void timeIsUpStopEverything()

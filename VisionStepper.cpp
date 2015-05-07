@@ -65,8 +65,6 @@ void VisionStepper::initPins(int enablePin, int directionPin, int stepPin)
   pinMode(stepPin, OUTPUT);
   stepPinState = LOW;
   digitalWrite(stepPin, stepPinState);
-  
-  special = false;
 }
 
 void VisionStepper::initDelays(unsigned long startSpeedDelay, unsigned long highPhaseDelay, unsigned long pauseSpeedDelay, unsigned long delayBeforeTurnOff)
@@ -76,25 +74,6 @@ void VisionStepper::initDelays(unsigned long startSpeedDelay, unsigned long high
   this->pauseSpeedDelay = pauseSpeedDelay;
   this->delayBeforeTurnOff = delayBeforeTurnOff;
   currentDelay = startSpeedDelay;
-}
-
-void VisionStepper::setTacticDelays(int tactic)
-{
-  switch(tactic)
-  {
-    case CLASSIC_TACTIC:  
-      stepSpeedCounterAcceleration = 8;
-      stepSpeedCounterSlowing = 6;
-      break;
-    case AGGRESSIVE_TACTIC:  
-      stepSpeedCounterAcceleration = 30; // 80
-      stepSpeedCounterSlowing = 40;  // 40
-      break;
-    case FAST_START:
-      stepSpeedCounterAcceleration = 40;
-      stepSpeedCounterSlowing = 30;
-      break;      
-  }
 }
 
 void VisionStepper::initSizes(float wheelDiameter, int wheelRevolutionSteps, float distanceBetweenWheels)
@@ -113,123 +92,10 @@ void VisionStepper::initStepCmRatio(float stepCmRatio)
 
 void VisionStepper::doLoop()
 {
-  switch (motorState)
-  {
-    case STARTING:
-      motorState = RUNNING;
-      enableState = TURN_ON;
-      break;
-    case RUNNING:
-      if (stepsRemaining <= stepSpeedCounter / stepSpeedCounterSlowing)
-        motorState = STOPPING_SLOWING;
-      break;
-    case PAUSING_SLOWING:
-      savedWhenPausingDelay = targetDelay;
-      savedDeacceleration = stepSpeedCounterSlowing;
-      stepSpeedCounterSlowing = 50;
-      setTargetDelay(pauseSpeedDelay);
-      motorState = PAUSING;
-      break;
-    case PAUSING:
-      if (speedState == CONSTANT)
-      {
-        stepSpeedCounterSlowing = savedDeacceleration;
-        enableState = DELAYED_TURN_OFF;
-        motorState = PAUSED;
-      }
-      break;
-    case PAUSED:
-      break;
-    case RESUME:
-      setTargetDelay(savedWhenPausingDelay);
-      if (enableState != ON)
-        enableState = TURN_ON;
-      motorState = RUNNING;
-      break;
-    case STOPPING_SLOWING:
-      setTargetDelay(startSpeedDelay);
-      motorState = STOPPING;
-      break;
-    case STOPPING:
-      if (stepsRemaining == 0)
-      {
-        enableState = DELAYED_TURN_OFF;
-        motorState = STOPPED;
-      }
-      break;
-    case STOPPED:
-      break;
-    default:
-      motorState.doLoop();
-  }
-  switch (enableState)
-  {
-    case TURN_ON:
-      speedState = START;
-      enablePinState = HIGH;
-      digitalWrite(enablePin, enablePinState);
-      enableState = ON;
-      break;
-    case ON:
-      break;
-    case DELAYED_TURN_OFF:
-      speedState = STOP;
-      enablePinState = LOW;
-      enableState.wait(delayBeforeTurnOff, TURN_OFF);
-      break;
-    case TURN_OFF:
-      digitalWrite(enablePin, enablePinState);
-      enableState = OFF;
-      break;
-    case OFF:
-      break;
-    default:
-      enableState.doLoop();
-  }
-  switch (speedState)
-  {
-    case ACCELERATING:
-      if (currentDelay <= targetDelay)
-        speedState = CONSTANT;
-      break;
-    case SLOWING:
-      if (currentDelay >= targetDelay)
-        speedState = CONSTANT;
-      break;
-    case CONSTANT:
-      break;
-    case UNDETERMINED:
-      if (currentDelay < targetDelay)
-        speedState = SLOWING;
-      else if (currentDelay > targetDelay)
-        speedState = ACCELERATING;
-      else
-        speedState = CONSTANT;
-      break;
-    case START:
-      stepSpeedCounter = 0;
-      speedState = ACCELERATING;
-      stepState = STEP_LOW;
-      break;
-    case STOP:
-      stepState = STATE_STOP;
-      break;
-    default:
-      speedState.doLoop();
-  }
   switch (stepState) {
     case STEP_LOW:
       stepsMadeSoFar++;
       stepsRemaining--;
-      if (speedState == ACCELERATING)
-        stepSpeedCounter += stepSpeedCounterAcceleration;
-      else if (speedState == SLOWING)
-      {
-        stepSpeedCounter -= stepSpeedCounterSlowing;
-        if (stepSpeedCounter < 0)
-            stepSpeedCounter = 0;
-      }
-      currentDelay = startSpeedDelay / sqrt(stepSpeedCounter + 1);
       stepPinState = LOW;
       digitalWrite(stepPin, stepPinState);
       stepState.waitMicros(currentDelay, STEP_HIGH);
@@ -250,10 +116,6 @@ float VisionStepper::getDistanceMadeSoFar()
 float VisionStepper::getDistanceRemainedToDo()
 {
   return stepsRemaining / stepCmRatio;
-}
-float VisionStepper::computeSpeed()
-{
-  return startSpeedDelay * 10 / sqrt(1 * stepSpeedCounter + 100);
 }
 
 void VisionStepper::pause()
@@ -332,15 +194,6 @@ void VisionStepper::doDistanceInCm(float distance)
 void VisionStepper::doRotationInAngle(float angle)
 {
   doSteps(angle * degreeStepRatio);
-}
-
-void VisionStepper::setSpecial()
-{
-  special = true;
-}
-void VisionStepper::resetSpecial()
-{
-  special = false;
 }
 
 
