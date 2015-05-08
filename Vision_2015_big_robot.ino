@@ -27,7 +27,7 @@ float distanceToDo = 0;
 
 void setup()
 { 
-  Serial.begin(115200);
+  //Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
   state.wait(100, YELLOW_START_STATE);
@@ -40,14 +40,14 @@ void loop()
   {
     case 0:
       base.update();
-      state.waitMicros(10000,0);
+      state.wait(100,0);
       break;
     default:
       state.doLoop();
   }
   if(!stoppedEverything)
   {
-    base.checkObstructions();
+    //base.checkObstructions();
     base.doLoop();
   }
   testIfTimeUp();

@@ -17,15 +17,15 @@ const int leftMotorEnablePin = 50;
 const int leftMotorStepPin = 52;
 const int leftMotorDirectionPin = 48;
 
-const int rightMotorEnablePin = 46;
-const int rightMotorStepPin = 44;
-const int rightMotorDirectionPin = 42;
+const int rightMotorEnablePin = 42;
+const int rightMotorStepPin = 46;
+const int rightMotorDirectionPin = 44;
 
-const int leftEncoderStepPin = 8;
-const int leftEncoderBPin = 9;
+const int leftEncoderStepPin = A5;
+const int leftEncoderBPin = A4;
 
-const int rightEncoderStepPin = 10;
-const int rightEncoderBPin = 11;
+const int rightEncoderStepPin = A3;
+const int rightEncoderBPin = A2;
 
 #endif
 

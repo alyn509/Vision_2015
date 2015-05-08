@@ -58,6 +58,7 @@ void VisionStepper::setSpeed(double speed)
     stopNow();
     return;
   }
+  start();
   if (speed < 0)
   {
     speed = -speed;
@@ -65,7 +66,12 @@ void VisionStepper::setSpeed(double speed)
   }
   else
     setDirectionForward();
-  currentDelay = 1.0 / speed;
+  currentDelay = 1000000.0 / speed;
+  /*
+  Serial.print(" CD ");
+  Serial.print(currentDelay);
+  Serial.print(" SPD ");
+  Serial.print(speed);*/
 }
 
 void VisionStepper::doLoop()
@@ -101,8 +107,11 @@ void VisionStepper::pause()
 
 void VisionStepper::start()
 {
-  if (isOff())
+  if (isOff()) {
+    enablePinState = LOW;
+    digitalWrite(enablePin, enablePinState);
     stepState = STEP_LOW;
+  }
 }
 
 void VisionStepper::unpause()

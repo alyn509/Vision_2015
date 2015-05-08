@@ -23,14 +23,15 @@ class VisionBase {
     Servo sensorScanner;
     elapsedMillis sensorToggleTimer;
     
-    void moveForward(float distance);
-    void moveBackward(float distance);
+    void moveForward(double distance);
+    void moveBackward(double distance);
+    void turnLeft(double distance);
+    void turnRight(double distance);
+    void move(double distance);
     
     boolean frontDetected();
     
     void checkObstructions();
-    void turnLeft(int angle);
-    void turnRight(int angle);
     
     void pause();
     void unpause();
