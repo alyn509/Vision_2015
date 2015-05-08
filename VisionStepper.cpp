@@ -1,45 +1,15 @@
 #include "VisionStepper.h"
 
-// motorState states
-#define STARTING 0
-#define RUNNING 1
-#define PAUSING_SLOWING 2
-#define PAUSING 3
-#define PAUSED 4
-#define RESUME 5
-#define STOPPING_SLOWING 6
-#define STOPPING 7
-#define STOPPED 8
-
-// enableState states
-#define TURN_ON 0
-#define ON 1
-#define DELAYED_TURN_OFF 2
-#define TURN_OFF 3
-#define OFF 4
-
-// speedState states
-#define ACCELERATING 0
-#define SLOWING 1
-#define CONSTANT 2
-#define UNDETERMINED 3
-#define START 4
-#define STOP 5
-
 // stepState states
 #define STEP_LOW 0
 #define STEP_HIGH 1
-
-const unsigned long waitBeforeTurningOff = 500;
+#define STOPPING 2
+#define STOP 3
 
 void VisionStepper::init()
 {
-  stepsMadeSoFar = 0;
-  stepsRemaining = 0;
-  motorState = STOPPED;
-  speedState = STATE_STOP;
-  enableState = OFF;
   stepState = STATE_STOP;
+  highPhaseDelay = 20;
   forwardDirection = HIGH;
 }
 
@@ -85,7 +55,7 @@ void VisionStepper::setSpeed(double speed)
 {
   if (speed == 0)
   {
-    stepState = STOP;
+    stopNow();
     return;
   }
   if (speed < 0)
@@ -102,11 +72,9 @@ void VisionStepper::doLoop()
 {
   switch (stepState) {
     case STEP_LOW:
-      stepsMadeSoFar++;
-      stepsRemaining--;
       stepPinState = LOW;
       digitalWrite(stepPin, stepPinState);
-      stepState.waitMicros(currentDelay, STEP_HIGH);
+      stepState.waitMicros(currentDelay - highPhaseDelay, STEP_HIGH);
       break;
     case STEP_HIGH:
       stepPinState = HIGH;
@@ -125,41 +93,32 @@ void VisionStepper::doLoop()
       stepState.doLoop();
   }
 }
-float VisionStepper::getDistanceMadeSoFar()
-{
-  return stepsMadeSoFar / stepCmRatio;
-}
-float VisionStepper::getDistanceRemainedToDo()
-{
-  return stepsRemaining / stepCmRatio;
-}
 
 void VisionStepper::pause()
 {
   stopNow();
 }
 
+void VisionStepper::start()
+{
+  if (isOff())
+    stepState = STEP_LOW;
+}
+
 void VisionStepper::unpause()
 {
-  stepState = STEP_LOW;
+  start();
 }
 
 void VisionStepper::stopNow()
 {
-  stepState = STATE_STOP;
-}
-
-void VisionStepper::setTargetDelay(unsigned long targetDelay)
-{
-  if (this->targetDelay == targetDelay)
-    return;
-  this->targetDelay = targetDelay;
-  speedState = UNDETERMINED;
+  if (!isOff())
+    stepState = STOPPING;
 }
 
 boolean VisionStepper::isOff()
 {
-  return stepState == STATE_STOP;
+  return !((stepState == STEP_LOW) || (stepState == STEP_HIGH));
 }
 
 boolean VisionStepper::isPaused()

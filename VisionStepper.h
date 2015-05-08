@@ -5,13 +5,6 @@
   #include <elapsedMillis.h>
   #include "VisionState.h"
   
-  #define CLASSIC_TACTIC 0
-  #define AGGRESSIVE_TACTIC 40
-  #define FAST_START 150
-  #define FRIENDLY_TACTIC 80
-  #define GREEDY_TACTIC 200
-  #define HOMOLOGATION -200
-  
   class VisionStepper {
     public:
       void init();
@@ -24,20 +17,13 @@
       void toggleDirection();
       void setDirectionForward();
       void setDirectionBackward();
-      void setTargetDelay(unsigned long targetDelay);
       void setSpeed(double speed);
       boolean isOff();
       boolean isPaused();
-      boolean isAtTargetSpeed();
-      void doSteps(unsigned long stepNumber);
-      void doDistanceInCm(float distance);
-      void doRotationInAngle(float angle);
       void stopNow();
-      void setMaxSpeed();
+      void start();
       void pause();
       void unpause();
-      float getDistanceMadeSoFar();
-      float getDistanceRemainedToDo();
     private:
       void doSetup();
       float computeSpeed();
@@ -45,13 +31,8 @@
       int enablePin, directionPin, stepPin;
       int enablePinState, directionPinState, stepPinState;
       boolean forwardDirection;
-      VisionState motorState, enableState, speedState, stepState;
-      long stepsMadeSoFar, stepsRemaining;
-      float stepSpeedCounter, stepSpeedCounterAcceleration, stepSpeedCounterSlowing;
-      float startSpeedDelay, currentDelay, targetDelay, pauseSpeedDelay, delayBeforeTurnOff, highPhaseDelay, savedWhenPausingDelay, savedDeacceleration;
-      int old_state;
-      elapsedMicros stepTimer;
-      boolean special;
+      VisionState stepState;
+      float currentDelay, highPhaseDelay, delayBeforeTurnOff;
       
       float stepCmRatio; // steps for a cm
       float degreeStepRatio; //steps for a degree turn;

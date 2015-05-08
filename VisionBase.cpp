@@ -1,9 +1,18 @@
 #include "VisionBase.h"
 
+double leftLast, rightLast;
+
+// TODO: adjust the coefficients
+double turnErrorInput, turnOutput, turnErrorTarget;
+PID turnPID(&turnErrorInput, &turnOutput, &turnErrorTarget,2,5,1, DIRECT);
+double speedInput, speedOutput, speedTarget;
+PID speedPID(&speedInput, &speedOutput, &speedTarget,0.2,0.1,1, DIRECT);
+
 void VisionBase::init()
 {
   frontSensor.initPin(frontSensorPin);
-    
+  
+  leftMotor.init();
   leftMotor.initDirectionForward(HIGH);
   leftMotor.initPins(leftMotorEnablePin, leftMotorDirectionPin, leftMotorStepPin);
   
@@ -17,19 +26,33 @@ void VisionBase::init()
   
   obstructionDetected = false;
   ignoredSensors = false;
+  
+  turnPID.SetSampleTime(9);
+  speedPID.SetSampleTime(9);
+  speedPID.SetOutputLimits(-10000.0, 10000.0);
+  speedPID.SetMode(AUTOMATIC);
+  turnPID.SetMode(AUTOMATIC);
+  
+  leftLast = 0;
+  rightLast = 0;
+  speedTarget = 0;
+  turnErrorTarget = 0;
+  
+  state = 0;
 }
 
-void VisionBase::moveForward(float distance, unsigned long step_delay)
+void VisionBase::moveForward(float distance)
 {
-  rightMotor.setTargetDelay(step_delay);
   leftMotor.setDirectionForward();
   rightMotor.setDirectionForward();
-  rightMotor.doDistanceInCm(distance);
   leftEncoder.reset();
   rightEncoder.reset();
+  leftLast = 0;
+  rightLast = 0;
+  speedTarget = distanceToEncoderTicks(distance);
 }
 
-void VisionBase::moveBackward(float distance, unsigned long step_delay)
+void VisionBase::moveBackward(float distance)
 {
 }
 
@@ -73,41 +96,63 @@ void VisionBase::checkObstructions()
     obstructionDetected = true;
 }
 
-double turnErrorInput, turnOutput, turnErrorTarget;
-PID turnPID(&turnErrorInput, &turnOutput, &turnErrorTarget,2,5,1, DIRECT);
-double speedInput, speedOutput, speedTarget;
-PID speedPID(&speedInput, &speedOutput, &speedTarget,2,5,1, DIRECT);
-
 void VisionBase::doLoop()
 {
+  leftMotor.doLoop();
   rightMotor.doLoop();
   
   leftEncoder.updatePosition();
   rightEncoder.updatePosition();
   
-  double left = leftEncoder.getPosition();
-  double right = rightEncoder.getPosition();
-  
+  switch (state) {
+    case 0:
+      moveForward(-10);
+      state = STATE_STOP;
+      break;
+    default:
+      state.doLoop();
+  }
 }
 
 void VisionBase::stopNow()
-{    
+{
+  leftMotor.stopNow();
   rightMotor.stopNow();
 }
 
-float VisionBase::getDistanceMadeSoFar()
-{    
-  return rightMotor.getDistanceMadeSoFar();
-}
-
-float VisionBase::encoderValue(float value)
+double VisionBase::encoderValue(double value)
 {
   return (value * PI * wheelDiameter) / encoderResolution;
 }
 
-
+double VisionBase::distanceToEncoderTicks(double distance)
+{
+  return (distance * encoderResolution) / (PI * wheelDiameter);
+}
 
 void VisionBase::update()
 {
-
+   double left = leftEncoder.getPosition();
+   double right = rightEncoder.getPosition();
+   
+   turnErrorInput = left - right;
+   speedInput = (left + right) / 2;
+   speedPID.Compute();
+   turnPID.SetOutputLimits(-abs(speedOutput), abs(speedOutput));
+   turnPID.Compute();
+   leftMotor.setSpeed(speedOutput - turnOutput);
+   rightMotor.setSpeed(speedOutput + turnOutput);
+   leftLast = left;
+   rightLast = right;
+   
+   Serial.print("L ");
+   Serial.print(left);
+   Serial.print(" R ");
+   Serial.print(right);
+   Serial.print(" ST ");
+   Serial.print(speedTarget);
+   Serial.print(" SO ");
+   Serial.print(speedOutput);
+   Serial.print(" TO ");
+   Serial.println(turnOutput);
 }

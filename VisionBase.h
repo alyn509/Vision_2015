@@ -23,8 +23,8 @@ class VisionBase {
     Servo sensorScanner;
     elapsedMillis sensorToggleTimer;
     
-    void moveForward(float distance, unsigned long step_delay);
-    void moveBackward(float distance, unsigned long step_delay);
+    void moveForward(float distance);
+    void moveBackward(float distance);
     
     boolean frontDetected();
     
@@ -40,8 +40,8 @@ class VisionBase {
     boolean isStopped();
     boolean isPaused();
     
-    float getDistanceMadeSoFar();
-    float encoderValue(float value);    
+    double encoderValue(double value);
+    double distanceToEncoderTicks(double distance);
     
     void update();
     
@@ -51,7 +51,7 @@ class VisionBase {
     
     VisionSensor frontSensor;
     
-
+    VisionState state;
     
     boolean ignoredSensors;
     boolean obstructionDetected;

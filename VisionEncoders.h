@@ -7,7 +7,6 @@
 class VisionEncoders {
   public:    
      double currentPosition = 0;
-     double lastReadPosition = 0;
      int lastState = LOW;
      int stepPin, bpin;
   public:

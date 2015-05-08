@@ -27,7 +27,7 @@ float distanceToDo = 0;
 
 void setup()
 { 
-  //Serial.begin(115200);
+  Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
   state.wait(100, YELLOW_START_STATE);
