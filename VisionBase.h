@@ -9,7 +9,6 @@
 #include "constants.h"
 #include <elapsedMillis.h>
 #include <Servo.h>
-#include <PID_v1.h>
 
 #define NONE 4
 #define FRONT 3
@@ -20,29 +19,34 @@
 class VisionBase {
   public:
     void init();
-    Servo sensorScanner;
-    elapsedMillis sensorToggleTimer;
+    void setStartDelays(unsigned long startDelay);
+    void setTacticDelays(int tactic);
     
-    void moveForward(double distance);
-    void moveBackward(double distance);
-    void turnLeft(double distance);
-    void turnRight(double distance);
-    void move(double distance);
+    void moveForward(float distance, unsigned long step_delay);
+    void moveBackward(float distance, unsigned long step_delay);
     
     boolean frontDetected();
     
-    void checkObstructions();
+    void turnLeft(int angle);
+    void turnRight(int angle);
+    
+    void doMovementRequirements(int step_delay);
     
     void pause();
     void unpause();
     void stopNow();
     void doLoop();
     
+    bool leftMotorDir();
+    bool rightMotorDir();
+    
+    void setSpecial();
+    void resetSpecial();
+    
     boolean isStopped();
     boolean isPaused();
     
-    double encoderValue(double value);
-    double distanceToEncoderTicks(double distance);
+    float encoderValue(float value);    
     
     void update();
     
@@ -50,12 +54,15 @@ class VisionBase {
     VisionStepper leftMotor, rightMotor;
     VisionEncoders leftEncoder, rightEncoder;
     
+    VisionState state;
     VisionSensor frontSensor;
     
-    VisionState state;
+    int directionMovement;
     
-    boolean ignoredSensors;
-    boolean obstructionDetected;
+    bool ignoredSensors;
+    
+    float lastPositionLeft = 0;
+    float lastPositionRight = 0;
 };
 
 #endif

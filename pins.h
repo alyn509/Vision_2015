@@ -2,6 +2,7 @@
 #define pins_little_robot_h
   
 const int frontSensorPin = 999;
+const int startButtonPin = 999;
 
 //const int hookServoPin = 22;
 //const int leftGrabberServoPin = 32;

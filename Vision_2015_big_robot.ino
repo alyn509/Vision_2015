@@ -1,8 +1,8 @@
 #include <elapsedMillis.h>
 #include <Stepper.h>
 #include <LiquidCrystal.h>
-#include <Servo.h>
-#include <PID_v1.h>
+#include <TimerThree.h>
+#include <Servo.h> 
 #include "VisionStepper.h"
 #include "VisionBase.h"
 #include "VisionState.h"
@@ -10,65 +10,85 @@
 #include "pins.h"
 #include "constants.h"
 
-#define NINETYSECONDS 89000L
+#define NINETYSECONDS 39000L
 
 VisionBase base;
-elapsedMillis timeUpTimer;
-elapsedMillis extra;
-elapsedMillis enemyTimer, enemyThere;
+elapsedMillis timeUpTimer, enemyTimer;
 boolean stoppedEverything = true; 
 
-VisionState state;
-float distanceToDo = 0;
+VisionState state, movementState;
 
-#define YELLOW_START_STATE 0
-#define GREEN_START_STATE 200
-#define HOMOLOGATION 400
-
+VisionSensor startButton;
 void setup()
-{ 
-  //Serial.begin(115200);
+{   
+  startButton.initPin(startButtonPin);
+  startButton.setAsPullup();
+  while(startButton.detect());
+  delay(50);
+  Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
-  state.wait(100, YELLOW_START_STATE);
   stoppedEverything = false;
+    
+  base.setTacticDelays(AGGRESSIVE_TACTIC);
 }
 
 void loop()
-{
+{ 
   switch (state)
-  {
-    case 0:
-      base.update();
-      state.wait(100,0);
-      break;
+  {  
     default:
-      state.doLoop();
+      state.doLoop();       
+      base.update();
   }
+    
+  switch(movementState)
+  {
+    case 0: 
+      base.moveForward(10, 30);
+      movementState.waitFor(baseStop,1);
+      break;
+    case 1:
+      base.turnLeft(90);
+      movementState.waitFor(baseStop,0);
+      break;
+  }
+  
   if(!stoppedEverything)
   {
-    //base.checkObstructions();
+    checkForObstacle();
     base.doLoop();
   }
-  testIfTimeUp();
+    testIfTimeUp();
 }
 
 void testIfTimeUp()
 {
-  if(timeUpTimer >= NINETYSECONDS)
+  if(timeUpTimer == NINETYSECONDS)
     timeIsUpStopEverything();
 }
 
 void timeIsUpStopEverything()
 {
   stoppedEverything = true;
-  extra = 0;
   state = STATE_STOP;
   base.stopNow();
+}
+
+void checkForObstacle()
+{
+  if(!base.isStopped())
+  {
+    if(base.frontDetected() == true ) 
+      enemyTimer = 0;
+    if(base.frontDetected() == true && !base.isPaused() && !base.ignoredSensors)   
+      base.pause();
+    else if(base.frontDetected() == false && base.isPaused() && enemyTimer > 500L)
+      base.unpause();
+  }
 }
 
 boolean baseStop()
 {
   return base.isStopped();
 }
-

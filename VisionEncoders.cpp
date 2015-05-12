@@ -2,32 +2,33 @@
 #include "pins.h"
 #include <elapsedMillis.h>
 
-void VisionEncoders::init(int pinStep, int bpin) 
-{
+void VisionEncoders::init(int pinStep) 
+{ 
    stepPin = pinStep;
-   this->bpin = bpin;
-   pinMode(stepPin,INPUT_PULLUP);
-   pinMode(bpin,INPUT_PULLUP);
-}
+   pinMode (stepPin,INPUT_PULLUP);
+} 
 
-double VisionEncoders::getPosition() 
+long VisionEncoders::getPosition() 
 { 
    return currentPosition;
+} 
+
+void VisionEncoders::resetPosition() 
+{ 
+   currentPosition = 0;
 } 
 
 void VisionEncoders::updatePosition() 
 { 
    int currentState = digitalRead(stepPin);
-   int bvalue = digitalRead(bpin);
-   if (lastState != currentState)
-   {
-       currentPosition += (currentState ^ bvalue) ? -1 : 1;
-       lastState = currentState;
-   }
-}
+   if (lastState != currentState) 
+       currentPosition++;
+   lastState = currentState;
+} 
 
-void VisionEncoders::reset()
+int VisionEncoders::getTraveledLength()
 {
-  currentPosition = 0;
+   int traveled = currentPosition - lastReadPosition;
+   lastReadPosition = currentPosition;
+   return traveled;
 }
-

@@ -1,195 +1,186 @@
 #include "VisionBase.h"
 
-double leftLast, rightLast;
-
-// TODO: adjust the coefficients
-double turnErrorInput, turnOutput, turnErrorTarget;
-PID turnPID(&turnErrorInput, &turnOutput, &turnErrorTarget,2,5,1, DIRECT);
-double speedInputL, speedInputR, speedOutputR, speedOutputL, speedTargetL, speedTargetR;
-PID speedPIDL(&speedInputL, &speedOutputL, &speedTargetL,0.1,0.08,1, DIRECT);
-PID speedPIDR(&speedInputR, &speedOutputR, &speedTargetR,0.1,0.08,1, DIRECT);
-
 void VisionBase::init()
 {
   frontSensor.initPin(frontSensorPin);
-  
+    
   leftMotor.init();
   leftMotor.initDirectionForward(HIGH);
   leftMotor.initPins(leftMotorEnablePin, leftMotorDirectionPin, leftMotorStepPin);
-  leftMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);
+  leftMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
+  leftMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
   
   rightMotor.init();
-  rightMotor.initDirectionForward(HIGH);
+  rightMotor.initDirectionForward(LOW);
   rightMotor.initPins(rightMotorEnablePin, rightMotorDirectionPin, rightMotorStepPin);
-  rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);
+  rightMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
+  rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
   
-  leftEncoder.init(leftEncoderStepPin, leftEncoderBPin);
-  rightEncoder.init(rightEncoderStepPin, rightEncoderBPin);
-  
-  obstructionDetected = false;
+  leftEncoder.init(leftEncoderStepPin);
+  rightEncoder.init(rightEncoderStepPin);
+    
+  directionMovement = NONE;
   ignoredSensors = false;
-  
-  turnPID.SetSampleTime(99);
-  speedPIDL.SetSampleTime(99);
-  speedPIDL.SetOutputLimits(-1000.0, 1000.0);
-  speedPIDL.SetMode(AUTOMATIC);
-  speedPIDR.SetSampleTime(99);
-  speedPIDR.SetOutputLimits(-1000.0, 1000.0);
-  speedPIDR.SetMode(AUTOMATIC);
-  turnPID.SetMode(AUTOMATIC);
-  
-  leftLast = 0;
-  rightLast = 0;
-  speedTargetL = 0;
-  speedTargetR = 0;
-  turnErrorTarget = 0;
   
   state = 0;
 }
 
-void VisionBase::moveForward(double distance)
+void VisionBase::setTacticDelays(int tactic)
 {
-  move(distance);
-  speedTargetL = distanceToEncoderTicks(distance);
-  speedTargetR = distanceToEncoderTicks(distance);
+  rightMotor.setTacticDelays(tactic);
+  leftMotor.setTacticDelays(tactic);
 }
 
-void VisionBase::moveBackward(double distance)
+void VisionBase::setStartDelays(unsigned long startDelay)
 {
-  move(distance);
-  speedTargetL = -distanceToEncoderTicks(distance);
-  speedTargetR = -distanceToEncoderTicks(distance);
+  rightMotor.initDelays(startDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
+  leftMotor.initDelays(startDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
 }
 
-void VisionBase::turnLeft(double distance)
-{
-  move(distance);
-  speedTargetL = -distanceToEncoderTicks(distance);
-  speedTargetR = distanceToEncoderTicks(distance);
+void VisionBase::moveForward(float distance, unsigned long step_delay)
+{       
+  directionMovement = FRONT;
+  
+  doMovementRequirements(step_delay);  
+  
+  leftMotor.setDirectionForward();
+  rightMotor.setDirectionForward(); 
+  
+  leftMotor.doDistanceInCm(distance);
+  rightMotor.doDistanceInCm(distance);
 }
 
-void VisionBase::turnRight(double distance)
-{
-  move(distance);
-  speedTargetL = distanceToEncoderTicks(distance);
-  speedTargetR = -distanceToEncoderTicks(distance);
+void VisionBase::moveBackward(float distance, unsigned long step_delay)
+{    
+  directionMovement = BACK;   
+
+  doMovementRequirements(step_delay);
+
+  leftMotor.setDirectionBackward();
+  rightMotor.setDirectionBackward();  
+  
+  leftMotor.doDistanceInCm(distance);
+  rightMotor.doDistanceInCm(distance);
 }
 
-void VisionBase::move(double distance)
+void VisionBase::turnLeft(int angle)
 {
-  leftEncoder.reset();
-  rightEncoder.reset();
-  leftLast = 0;
-  rightLast = 0;
+  directionMovement = LEFT; 
+
+  doMovementRequirements(5000);
+  
+  leftMotor.setDirectionBackward();
+  rightMotor.setDirectionForward();
+  
+  leftMotor.doRotationInAngle(angle);
+  rightMotor.doRotationInAngle(angle); 
+}
+
+void VisionBase::turnRight(int angle)
+{  
+  directionMovement = RIGHT;
+  
+  doMovementRequirements(5000);
+    
+  leftMotor.setDirectionForward();
+  rightMotor.setDirectionBackward();
+  
+  leftMotor.doRotationInAngle(angle);
+  rightMotor.doRotationInAngle(angle);
+  
+}
+
+void VisionBase::doMovementRequirements(int step_delay)
+{
+  leftMotor.setTargetDelay(step_delay);
+  rightMotor.setTargetDelay(step_delay);
+  
+  lastPositionLeft = leftEncoder.getPosition();
+  lastPositionRight = rightEncoder.getPosition();
+}
+
+bool VisionBase::leftMotorDir()
+{
+  return (directionMovement / 2) % 2;
+}
+
+bool VisionBase::rightMotorDir()
+{  
+  return directionMovement % 2;
+}
+
+void VisionBase::setSpecial()
+{
+  leftMotor.setSpecial();
+  rightMotor.setSpecial();
+}
+
+void VisionBase::resetSpecial()
+{
+  leftMotor.resetSpecial();
+  rightMotor.resetSpecial();
 }
 
 void VisionBase::pause()
-{
+{ 
   leftMotor.pause();
   rightMotor.pause();
 }
-
 void VisionBase::unpause()
 {
   leftMotor.unpause();
   rightMotor.unpause();
 }
 
-boolean VisionBase::frontDetected()
+bool VisionBase::frontDetected()
 {
   return frontSensor.detect();
 }
 
-boolean VisionBase::isStopped()
+bool VisionBase::isStopped()
 {
-  return rightMotor.isOff() && leftMotor.isOff();
+  return rightMotor.isOff();
 }
 
-boolean VisionBase::isPaused()
+bool VisionBase::isPaused()
 {
-  return rightMotor.isPaused() && leftMotor.isPaused();
-}
-
-void VisionBase::checkObstructions()
-{
-  obstructionDetected = false;
-  if (frontDetected() && !ignoredSensors)
-    obstructionDetected = true;
+  return rightMotor.isPaused();
 }
 
 void VisionBase::doLoop()
 {
   leftMotor.doLoop();
   rightMotor.doLoop();
-  
+    
   leftEncoder.updatePosition();
   rightEncoder.updatePosition();
-  
-  switch (state) {
-    case 0:
-      moveForward(30);
-      leftMotor.setSpeed(1000);
-      rightMotor.setSpeed(1000);
-      state.wait(10000, STATE_STOP);
-      break;
-    case 1:
-      turnLeft(10);
-      state.wait(1000, STATE_NEXT);
-      break;
-    case 2:
-      turnRight(10);
-      state.wait(1000, STATE_NEXT);
-      break;
-    default:
-      state.doLoop();
-  }
 }
 
 void VisionBase::stopNow()
-{
+{    
   leftMotor.stopNow();
   rightMotor.stopNow();
 }
 
-double VisionBase::encoderValue(double value)
+float VisionBase::encoderValue(float value)
 {
   return (value * PI * wheelDiameter) / encoderResolution;
 }
 
-double VisionBase::distanceToEncoderTicks(double distance)
-{
-  return (distance * encoderResolution) / (PI * wheelDiameter);
-}
-
 void VisionBase::update()
-{
-   double left = leftEncoder.getPosition();
-   double right = rightEncoder.getPosition();
-   /*
-   turnErrorInput = left - right;
-   speedInputL = left;
-   speedInputR = right;
-   speedPIDL.Compute();
-   speedPIDR.Compute();
-   turnPID.SetOutputLimits(abs(speedOutputL)/2.0, abs(speedOutputL));
-   turnPID.Compute();
-   leftMotor.setSpeed(speedOutputL - turnOutput);
-   rightMotor.setSpeed(speedOutputR + turnOutput);
-   leftLast = left;
-   rightLast = right;*/
-   /*
-   Serial.print("L ");
-   Serial.print(left);
-   Serial.print(" R ");
-   Serial.print(right);
-   Serial.print(" STL ");
-   Serial.print(speedTargetL);
-   Serial.print(" STR ");
-   Serial.print(speedTargetR);
-   Serial.print(" SOL ");
-   Serial.print(speedOutputL);
-   Serial.print(" SOR ");
-   Serial.print(speedOutputR);
-   Serial.print(" TO ");
-   Serial.println(turnOutput);*/
+{  
+  int admittedError = 5;
+  int leftError = encoderValue(lastPositionLeft - leftEncoder.getPosition()) - leftMotor.getDistanceMadeSoFar();
+  int rightError = encoderValue(lastPositionRight - rightEncoder.getPosition()) - rightMotor.getDistanceMadeSoFar();
+  
+  if (abs(leftError) > admittedError)
+  {
+    leftEncoder.currentPosition = 0;
+    leftMotor.doDistanceInCm(leftMotor.getDistanceRemainedToDo() + leftError);
+  }
+  if (abs(rightError) > admittedError)
+  {
+    rightEncoder.currentPosition = 0;
+    rightMotor.doDistanceInCm(rightMotor.getDistanceRemainedToDo() + rightError);
+  }
 }
