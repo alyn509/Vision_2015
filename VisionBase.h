@@ -41,16 +41,43 @@ class VisionBase {
     
     boolean isStopped();
     boolean isPaused();
+    
+    /************************************************** Servoz ***************************************************/
+    
+    void openLeftArm();     void closeLeftArm();     void grabLeftArm();
+    void openRightArm();    void closeRightArm();    void grabRightArm();
+    
+    void openLeftClaw();     void closeLeftClaw();     void grabLeftClaw();
+    void openRightClaw();    void closeRightClaw();    void grabRightClaw();
+    
+    void holdLeftLimitator();     void releaseLeftLimitator();
+    void holdRightLimitator();    void releaseRightLimitator();
+
+    void openLeftDoow();     void closeLeftDoor();
+    void openRightDoor();    void closeRightDoor();
+    
+    void releaseLeftPopcorn();
+    void releaseRightPopcorn();
+    
+    void gatherPopcorn();
+    void stopGatherPopcorn();
+    
+    void riseLift();
+    void lowerLift();
+    void stopLift();
+    
+    /******************************************************************************************************/
         
   public:
     VisionStepper leftMotor, rightMotor;
     
     Servo leftClaw, rightClaw,
-          leftElevator, rightElevator,
           leftLimitator, rightLimitator,
-          leftArm, rightArm;
-    VisionState state;
-    VisionSensor frontLeftSensor, frontRightSensor;
+          leftPopcornHolder, rightPopcornHolder,
+          leftArm, rightArm,
+          leftDoor, rightDoor;
+          
+    VisionSensor frontLeftSensor, frontRightSensor, liftLimitatorSensor;
     
     int directionMovement;
     

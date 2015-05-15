@@ -8,6 +8,7 @@
   #define CLASSIC_START 0
   #define AGGRESSIVE_START 40
   #define SLOW_START 150
+  
   #define FRIENDLY_TACTIC 80
   #define GREEDY_TACTIC 200
   #define HOMOLOGATION -200

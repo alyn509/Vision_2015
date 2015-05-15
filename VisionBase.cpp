@@ -4,6 +4,9 @@ void VisionBase::init()
 {
   frontLeftSensor.initPin(frontLeftSensorPin);
   frontRightSensor.initPin(frontRightSensorPin);
+  
+  liftLimitatorSensor.initPin(liftLimitatorSensorPin);
+  liftLimitatorSensor.setAsPullup();
     
   leftMotor.init();
   leftMotor.initDirectionForward(HIGH);
@@ -17,10 +20,27 @@ void VisionBase::init()
   rightMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
   rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);   
     
+  pinMode(popCornGrabberDCPin, OUTPUT);
+  pinMode(upLiftPin, OUTPUT);
+  pinMode(downLiftPin, OUTPUT);
+  
+  leftClaw.attach(leftClawServoPin);                  leftClaw.write(150);
+  rightClaw.attach(rightClawServoPin);                rightClaw.write(5);
+  
+  leftLimitator.attach(leftLimitatorServoPin);        leftLimitator.write(40);
+  rightLimitator.attach(rightLimitatorServoPin);      rightLimitator.write(60);
+  
+  leftPopcornHolder.attach(leftPopCornHolderPin);     leftPopcornHolder.write(180);
+  rightPopcornHolder.attach(rightPopCornHolderPin);   rightPopcornHolder.write(0);
+  
+  leftArm.attach(leftArmServoPin);                    leftArm.write(110);
+  rightArm.attach(rightArmServoPin);                  rightArm.write(20);
+  
+  leftDoor.attach(leftDoorServoPin);
+  rightDoor.attach(rightDoorServoPin);
+
   directionMovement = NONE;
   ignoredSensors = false;
-  
-  state = 0;
 }
 
 void VisionBase::setTacticDelays(int tactic)
@@ -142,4 +162,138 @@ void VisionBase::stopNow()
 {    
   leftMotor.stopNow();
   rightMotor.stopNow();
+}
+/********************************************************* Servoz *********************************************************/
+void VisionBase::openLeftArm()
+{
+  leftArm.write(30);
+}
+
+void VisionBase::closeLeftArm()
+{
+  leftArm.write(110);
+}
+
+void VisionBase::grabLeftArm()
+{
+  leftArm.write(90);
+}
+
+void VisionBase::openRightArm()
+{
+  rightArm.write(100);
+}
+
+void VisionBase::closeRightArm()
+{
+  rightArm.write(20);
+}
+
+void VisionBase::grabRightArm()
+{
+  rightArm.write(40);
+}
+ 
+void VisionBase::openLeftClaw()
+{
+  leftClaw.write(150);
+}
+
+void VisionBase::closeLeftClaw()
+{
+  leftClaw.write(12);
+}
+
+void VisionBase::grabLeftClaw()
+{
+  leftClaw.write(40);
+}
+
+void VisionBase::openRightClaw()
+{
+  rightClaw.write(5);
+}
+
+void VisionBase::closeRightClaw()
+{
+  rightClaw.write(138);
+}
+
+void VisionBase::grabRightClaw()
+{
+  rightClaw.write(115);
+}
+    
+void VisionBase::holdLeftLimitator()
+{
+  leftLimitator.write(13);
+}
+
+void VisionBase::releaseLeftLimitator()
+{
+  leftLimitator.write(40);
+}
+
+void VisionBase::holdRightLimitator()
+{
+  rightLimitator.write(97);
+}
+
+void VisionBase::releaseRightLimitator()
+{
+  rightLimitator.write(60);
+}
+
+void VisionBase::openLeftDoow()    // unimplemented
+{
+}
+
+void VisionBase::closeLeftDoor()    // unimplemented
+{
+}
+
+void VisionBase::openRightDoor()    // unimplemented
+{
+}
+
+void VisionBase::closeRightDoor()    // unimplemented
+{
+}
+  
+void VisionBase::releaseLeftPopcorn()
+{
+  leftPopcornHolder.write(130);
+}
+
+void VisionBase::releaseRightPopcorn()
+{
+  rightPopcornHolder.write(60);
+}
+    
+void VisionBase::gatherPopcorn()
+{
+  digitalWrite(popCornGrabberDCPin, HIGH);
+}
+
+void VisionBase::stopGatherPopcorn()
+{
+  digitalWrite(popCornGrabberDCPin, LOW);
+}
+    
+void VisionBase::riseLift()
+{
+  if(!liftLimitatorSensor.detect())
+    digitalWrite(upLiftPin, HIGH);
+  else
+    digitalWrite(upLiftPin, LOW);  
+}
+
+void VisionBase::lowerLift()
+{
+  digitalWrite(downLiftPin, HIGH);
+}
+void VisionBase::stopLift()
+{
+  digitalWrite(upLiftPin, LOW);
+  digitalWrite(downLiftPin, LOW);
 }

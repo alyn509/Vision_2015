@@ -18,15 +18,15 @@ const int rightLimitatorServoPin = 36;     // rightLimitator          97 holding
 const int leftDoorServoPin = 30;           // left door opener
 const int rightDoorServoPin = 34;          // right door opener
 
-const int leftPopCornHolder = 38;          // left popcorn holder     180 holding  -   130 released
-const int rightPopCornHolder = 40;         // right popcorn holder      0 holding  -    60 released 
+const int leftPopCornHolderPin = 38;          // left popcorn holder     180 holding  -   130 released
+const int rightPopCornHolderPin = 40;         // right popcorn holder      0 holding  -    60 released 
 
 const int liftLimitatorSensorPin = 53;     // lift botton
 
-const int popCornGrabberDC = 12;           // dc rotating continous
+const int popCornGrabberDCPin = 12;           // dc rotating continous
 
-const int upLift = A0;                     // bring lift up
-const int downLift = A1;                   // bring lift down
+const int upLiftPin = A0;                     // bring lift up
+const int downLiftPin = A1;                   // bring lift down
 
 const int leftMotorEnablePin = 50;
 const int leftMotorStepPin = 52;
