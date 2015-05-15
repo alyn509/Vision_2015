@@ -2,7 +2,8 @@
 
 void VisionBase::init()
 {
-  frontSensor.initPin(frontSensorPin);
+  frontLeftSensor.initPin(frontLeftSensorPin);
+  frontRightSensor.initPin(frontRightSensorPin);
     
   leftMotor.init();
   leftMotor.initDirectionForward(HIGH);
@@ -15,9 +16,9 @@ void VisionBase::init()
   rightMotor.initPins(rightMotorEnablePin, rightMotorDirectionPin, rightMotorStepPin);
   rightMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
   rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
-  
+  /*
   leftEncoder.init(leftEncoderStepPin);
-  rightEncoder.init(rightEncoderStepPin);
+  rightEncoder.init(rightEncoderStepPin);*/
     
   directionMovement = NONE;
   ignoredSensors = false;
@@ -94,9 +95,9 @@ void VisionBase::doMovementRequirements(int step_delay)
 {
   leftMotor.setTargetDelay(step_delay);
   rightMotor.setTargetDelay(step_delay);
-  
+/*  
   lastPositionLeft = leftEncoder.getPosition();
-  lastPositionRight = rightEncoder.getPosition();
+  lastPositionRight = rightEncoder.getPosition();*/
 }
 
 bool VisionBase::leftMotorDir()
@@ -134,7 +135,7 @@ void VisionBase::unpause()
 
 bool VisionBase::frontDetected()
 {
-  return frontSensor.detect();
+  return frontLeftSensor.detect() || frontRightSensor.detect();
 }
 
 bool VisionBase::isStopped()
@@ -151,9 +152,9 @@ void VisionBase::doLoop()
 {
   leftMotor.doLoop();
   rightMotor.doLoop();
-    
+/*    
   leftEncoder.updatePosition();
-  rightEncoder.updatePosition();
+  rightEncoder.updatePosition();*/
 }
 
 void VisionBase::stopNow()
@@ -161,12 +162,12 @@ void VisionBase::stopNow()
   leftMotor.stopNow();
   rightMotor.stopNow();
 }
-
+/*
 float VisionBase::encoderValue(float value)
 {
   return (value * PI * wheelDiameter) / encoderResolution;
-}
-
+}*/
+/*
 void VisionBase::update()
 {  
   int admittedError = 5;
@@ -183,4 +184,4 @@ void VisionBase::update()
     rightEncoder.currentPosition = 0;
     rightMotor.doDistanceInCm(rightMotor.getDistanceRemainedToDo() + rightError);
   }
-}
+}*/

@@ -10,7 +10,7 @@
 #include "pins.h"
 #include "constants.h"
 
-#define NINETYSECONDS 39000L
+#define NINETYSECONDS 89000L
 
 VisionBase base;
 elapsedMillis timeUpTimer, enemyTimer;
@@ -23,14 +23,14 @@ void setup()
 {   
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
-  while(startButton.detect());
+//  while(startButton.detect());
   delay(50);
   Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
   stoppedEverything = false;
     
-  base.setTacticDelays(AGGRESSIVE_TACTIC);
+  base.setTacticDelays(CLASSIC_START);
 }
 
 void loop()
@@ -39,27 +39,31 @@ void loop()
   {  
     default:
       state.doLoop();       
-      base.update();
+    //  base.update();
   }
-    
-  switch(movementState)
-  {
-    case 0: 
-      base.moveForward(10, 30);
-      movementState.waitFor(baseStop,1);
-      break;
-    case 1:
-      base.turnLeft(90);
-      movementState.waitFor(baseStop,0);
-      break;
-  }
+   
   
   if(!stoppedEverything)
   {
-    checkForObstacle();
     base.doLoop();
+     
+    switch(movementState)
+    {
+      case 0: 
+        base.moveForward(30, 1000);
+        movementState.waitFor(baseStop,1);
+        break;
+      case 1:
+        base.moveBackward(30, 1000);
+        movementState.waitFor(baseStop,0);
+        break;
+      case STATE_STOP:
+        break;
+    }
+        
+    checkForObstacle();
   }
-    testIfTimeUp();
+  testIfTimeUp();
 }
 
 void testIfTimeUp()

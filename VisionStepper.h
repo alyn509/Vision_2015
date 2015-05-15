@@ -5,9 +5,9 @@
   #include <elapsedMillis.h>
   #include "VisionState.h"
   
-  #define CLASSIC_TACTIC 0
-  #define AGGRESSIVE_TACTIC 40
-  #define FAST_START 150
+  #define CLASSIC_START 0
+  #define AGGRESSIVE_START 40
+  #define SLOW_START 150
   #define FRIENDLY_TACTIC 80
   #define GREEDY_TACTIC 200
   #define HOMOLOGATION -200

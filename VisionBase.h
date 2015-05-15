@@ -46,23 +46,27 @@ class VisionBase {
     boolean isStopped();
     boolean isPaused();
     
-    float encoderValue(float value);    
+    //float encoderValue(float value);    
     
-    void update();
+    //void update();
     
   public:
     VisionStepper leftMotor, rightMotor;
-    VisionEncoders leftEncoder, rightEncoder;
+   // VisionEncoders leftEncoder, rightEncoder;
     
+    Servo leftClaw, rightClaw,
+          leftElevator, rightElevator,
+          leftLimitator, rightLimitator,
+          leftArm, rightArm;
     VisionState state;
-    VisionSensor frontSensor;
+    VisionSensor frontLeftSensor, frontRightSensor;
     
     int directionMovement;
     
     bool ignoredSensors;
-    
+  /*  
     float lastPositionLeft = 0;
-    float lastPositionRight = 0;
+    float lastPositionRight = 0;*/
 };
 
 #endif

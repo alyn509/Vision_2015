@@ -82,17 +82,17 @@ void VisionStepper::setTacticDelays(int tactic)
 {
   switch(tactic)
   {
-    case CLASSIC_TACTIC:  
+    case CLASSIC_START:  
       stepSpeedCounterAcceleration = 8;
       stepSpeedCounterSlowing = 6;
       break;
-    case AGGRESSIVE_TACTIC:  
-      stepSpeedCounterAcceleration = 30; // 80
-      stepSpeedCounterSlowing = 40;  // 40
+    case AGGRESSIVE_START:  
+      stepSpeedCounterAcceleration = 30; 
+      stepSpeedCounterSlowing = 20;  
       break;
-    case FAST_START:
-      stepSpeedCounterAcceleration = 40;
-      stepSpeedCounterSlowing = 30;
+    case SLOW_START:
+      stepSpeedCounterAcceleration = 2;
+      stepSpeedCounterSlowing = 1;
       break;      
   }
 }
@@ -318,10 +318,7 @@ void VisionStepper::doSteps(unsigned long stepNumber)
 {
   stepsMadeSoFar = 0;
   stepsRemaining = stepNumber;
-  if(motorState != RUNNING)
-  {    
-    motorState = STARTING;
-  }
+  motorState = STARTING;
 }
 
 void VisionStepper::doDistanceInCm(float distance)
