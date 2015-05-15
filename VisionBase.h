@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include "VisionStepper.h"
 #include "VisionSensor.h"
-#include "VisionEncoders.h"
 #include "pins.h"
 #include "constants.h"
 #include <elapsedMillis.h>
@@ -37,22 +36,14 @@ class VisionBase {
     void stopNow();
     void doLoop();
     
-    bool leftMotorDir();
-    bool rightMotorDir();
-    
     void setSpecial();
     void resetSpecial();
     
     boolean isStopped();
     boolean isPaused();
-    
-    //float encoderValue(float value);    
-    
-    //void update();
-    
+        
   public:
     VisionStepper leftMotor, rightMotor;
-   // VisionEncoders leftEncoder, rightEncoder;
     
     Servo leftClaw, rightClaw,
           leftElevator, rightElevator,
@@ -64,9 +55,6 @@ class VisionBase {
     int directionMovement;
     
     bool ignoredSensors;
-  /*  
-    float lastPositionLeft = 0;
-    float lastPositionRight = 0;*/
 };
 
 #endif

@@ -15,10 +15,7 @@ void VisionBase::init()
   rightMotor.initDirectionForward(LOW);
   rightMotor.initPins(rightMotorEnablePin, rightMotorDirectionPin, rightMotorStepPin);
   rightMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
-  rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
-  /*
-  leftEncoder.init(leftEncoderStepPin);
-  rightEncoder.init(rightEncoderStepPin);*/
+  rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);   
     
   directionMovement = NONE;
   ignoredSensors = false;
@@ -95,19 +92,6 @@ void VisionBase::doMovementRequirements(int step_delay)
 {
   leftMotor.setTargetDelay(step_delay);
   rightMotor.setTargetDelay(step_delay);
-/*  
-  lastPositionLeft = leftEncoder.getPosition();
-  lastPositionRight = rightEncoder.getPosition();*/
-}
-
-bool VisionBase::leftMotorDir()
-{
-  return (directionMovement / 2) % 2;
-}
-
-bool VisionBase::rightMotorDir()
-{  
-  return directionMovement % 2;
 }
 
 void VisionBase::setSpecial()
@@ -152,9 +136,6 @@ void VisionBase::doLoop()
 {
   leftMotor.doLoop();
   rightMotor.doLoop();
-/*    
-  leftEncoder.updatePosition();
-  rightEncoder.updatePosition();*/
 }
 
 void VisionBase::stopNow()
@@ -162,26 +143,3 @@ void VisionBase::stopNow()
   leftMotor.stopNow();
   rightMotor.stopNow();
 }
-/*
-float VisionBase::encoderValue(float value)
-{
-  return (value * PI * wheelDiameter) / encoderResolution;
-}*/
-/*
-void VisionBase::update()
-{  
-  int admittedError = 5;
-  int leftError = encoderValue(lastPositionLeft - leftEncoder.getPosition()) - leftMotor.getDistanceMadeSoFar();
-  int rightError = encoderValue(lastPositionRight - rightEncoder.getPosition()) - rightMotor.getDistanceMadeSoFar();
-  
-  if (abs(leftError) > admittedError)
-  {
-    leftEncoder.currentPosition = 0;
-    leftMotor.doDistanceInCm(leftMotor.getDistanceRemainedToDo() + leftError);
-  }
-  if (abs(rightError) > admittedError)
-  {
-    rightEncoder.currentPosition = 0;
-    rightMotor.doDistanceInCm(rightMotor.getDistanceRemainedToDo() + rightError);
-  }
-}*/

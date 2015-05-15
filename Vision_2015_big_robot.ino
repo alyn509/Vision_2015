@@ -6,7 +6,6 @@
 #include "VisionStepper.h"
 #include "VisionBase.h"
 #include "VisionState.h"
-#include "VisionEncoders.h"
 #include "pins.h"
 #include "constants.h"
 
@@ -38,8 +37,7 @@ void loop()
   switch (state)
   {  
     default:
-      state.doLoop();       
-    //  base.update();
+      state.doLoop();   
   }
    
   
