@@ -34,6 +34,8 @@ void setup()
   base.setTacticDelays(CLASSIC_START);
 }
 
+char c1, c2;
+int n_read, n_angle, n_dist, n_wait;
 void loop()
 {  
   if(!stoppedEverything)
@@ -42,9 +44,61 @@ void loop()
      
     switch(movementState)
     {
-      case 0: 
-        base.moveForward(45, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
+      case 0:
+        if (Serial.available() > 0)
+        {
+          c1 = Serial.read();
+          Serial.print("(");
+          Serial.print(c1);
+          Serial.print(") ");
+          switch (c1)
+          {
+            case 'n':
+              Serial.print("New value: ");
+              c2 = Serial.read();
+              n_read = Serial.parseInt();
+              Serial.print("(");
+              Serial.print(c2);
+              Serial.print(") ");
+              switch (c2)
+              {
+                case 'a':
+                  n_angle = n_read;
+                  Serial.print("angle");
+                  break;
+                case 'd':
+                  n_dist = n_read;
+                  Serial.print("distance");
+                  break;
+                case 'w':
+                  n_wait = n_read;
+                  Serial.print("wait");
+                  break;
+                default:
+                  Serial.print("not recognized");
+                  break;
+              }
+              Serial.print(n_read);
+              break;
+            case 'b':
+              c2 = Serial.read();
+              switch (c2)
+              {
+                case 'f':
+                  break;
+                case 'l':
+                  break;
+                case 'r':
+                  break;
+                case 'b':
+                  break;
+              }
+              break;
+            default:
+              break;
+            Serial.println();
+          }
+        }
         break;
       case 1:
         base.turnRight(90);
