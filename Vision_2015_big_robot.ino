@@ -51,8 +51,8 @@ void loop()
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 2: 
-        base.openLeftArm();
-        base.moveForward(50, 4000);
+        base.openRightArm();
+        base.moveForward(45, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 3:
@@ -60,30 +60,54 @@ void loop()
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 4: 
-        base.moveForward(30, 4000);
+        base.moveForward(15, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 5:
-        base.grabLeftArm();
-        movementState.wait(300,STATE_NEXT);
+        base.turnLeft(90);
+        movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 6: 
-        base.moveForward(3, 4000);
+        base.moveForward(20, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
-      case 7: 
-        base.turnLeft(80);
-        movementState.waitFor(baseStop,STATE_NEXT);
+      case 7:
+        base.grabRightArm();
+        movementState.wait(300,STATE_NEXT);
         break;
       case 8: 
         base.moveForward(5, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
-      case 9: 
-        base.grabRightClaw();
-        movementState.wait(100,STATE_STOP);
+      case 9:
+        base.turnRight(90);
+        movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 10: 
+        base.moveForward(25, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 11: 
+        base.grabLeftClaw();
+        base.grabRightClaw();
+        base.openLeftArm();
+        movementState.wait(100,STATE_STOP);
+        break;
+      case 12: 
+        base.moveBackward(20, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 13: 
+        base.closeLeftArm();
+        base.moveForward(20, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 14: 
+        base.openLeftArm();
+        base.moveForward(20, 4000);
+        movementState.waitFor(baseStop,STATE_STOP);
+        break;
+      case 15: 
         base.turnLeft(10);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;

@@ -191,7 +191,7 @@ void VisionBase::closeRightArm()
 
 void VisionBase::grabRightArm()
 {
-  rightArm.write(40);
+  rightArm.write(32);
 }
  
 void VisionBase::openLeftClaw()
