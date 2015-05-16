@@ -15,14 +15,16 @@ VisionBase base;
 elapsedMillis timeUpTimer, enemyTimer;
 boolean stoppedEverything = true; 
 
-VisionState state, movementState;
+VisionState movementState;
 
 VisionSensor startButton;
 void setup()
 {   
+  pinMode(3, OUTPUT);
+  digitalWrite(3, LOW);    // we set pin 3 as GND.. because of Claudiu
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
-//  while(startButton.detect());
+  while(startButton.detect());
   delay(50);
   Serial.begin(115200);
   timeUpTimer = 0;
@@ -33,14 +35,7 @@ void setup()
 }
 
 void loop()
-{ 
-  switch (state)
-  {  
-    default:
-      state.doLoop();   
-  }
-   
-  
+{  
   if(!stoppedEverything)
   {
     base.doLoop();
@@ -48,15 +43,17 @@ void loop()
     switch(movementState)
     {
       case 0: 
-        base.moveForward(30, 1000);
+        base.moveForward(30, 5000);
         movementState.waitFor(baseStop,1);
         break;
       case 1:
-        base.moveBackward(30, 1000);
-        movementState.waitFor(baseStop,0);
+        base.turnRight(90);
+        movementState.waitFor(baseStop,STATE_STOP);
         break;
       case STATE_STOP:
         break;
+      default:
+        movementState.doLoop();   
     }
         
     checkForObstacle();
@@ -73,7 +70,7 @@ void testIfTimeUp()
 void timeIsUpStopEverything()
 {
   stoppedEverything = true;
-  state = STATE_STOP;
+  movementState = STATE_STOP;
   base.stopNow();
 }
 
