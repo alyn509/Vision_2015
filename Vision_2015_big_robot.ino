@@ -43,12 +43,49 @@ void loop()
     switch(movementState)
     {
       case 0: 
-        base.moveForward(30, 5000);
-        movementState.waitFor(baseStop,1);
+        base.moveForward(45, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 1:
         base.turnRight(90);
-        movementState.waitFor(baseStop,STATE_STOP);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 2: 
+        base.openLeftArm();
+        base.moveForward(50, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 3:
+        base.turnRight(90);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 4: 
+        base.moveForward(30, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 5:
+        base.grabLeftArm();
+        movementState.wait(300,STATE_NEXT);
+        break;
+      case 6: 
+        base.moveForward(3, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 7: 
+        base.turnLeft(80);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 8: 
+        base.moveForward(5, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 9: 
+        base.grabRightClaw();
+        movementState.wait(100,STATE_STOP);
+        break;
+      case 10: 
+        base.turnLeft(10);
+        movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case STATE_STOP:
         break;
