@@ -25,6 +25,7 @@ void VisionBase::init()
 
   directionMovement = NONE;  
   ignoredSensors = false;
+  state = 0;
   /*
   if(sideButton.detect())
     state = YELLOW_SIDE;
@@ -241,10 +242,10 @@ char c1, c2;
 int n_read, n_angle = 90, n_dist = 100, n_wait = 100, n_tdelay, n_pwm = 30;
 
 void VisionBase::doLoop()
-{   
+{
   switch(state)
   {
-    case 0: 
+    case 0:
       if (Serial.available() > 0)
       {
         c1 = Serial.read();
@@ -293,22 +294,22 @@ void VisionBase::doLoop()
               case 'f':
                 Serial.print("moving forward by n_dist ");Serial.print(n_dist);
                 Serial.print(" using pwm ");Serial.print(n_pwm);
-                moveForward(n_dist, n_pwm, state);
+                state = 1;
                 break;
               case 'l':
                 Serial.print("turning left by n_angle ");Serial.print(n_angle);
                 Serial.print(" using pwm ");Serial.print(n_pwm);
-                turnLeft(n_angle, n_pwm, state);
+                state = 2;
                 break;
               case 'r':
                 Serial.print("turning right by n_angle ");Serial.print(n_angle);
                 Serial.print(" using pwm ");Serial.print(n_pwm);
-                turnRight(n_angle, n_pwm, state);
+                state = 3;
                 break;
               case 'b':
                 Serial.print("moving backward by n_dist ");Serial.print(n_dist);
                 Serial.print(" using pwm ");Serial.print(n_pwm);
-                moveBackward(n_dist, n_pwm, state);
+                state = 4;
                 break;
               default:
                 Serial.print("not recognized;\npossible values:f-forward,l-left,r-right,b-backward");
@@ -364,80 +365,16 @@ void VisionBase::doLoop()
       }
       break;
     case 1:
-      turnRight(90, 30, STATE_NEXT);
+      moveForward(n_dist, n_pwm, 0);
       break;
     case 2: 
-      openRightArm();
-      moveForward(45, 30, STATE_NEXT);
+      turnLeft(n_angle, n_pwm, 0);
       break;
     case 3:
-      turnRight(90, 30, STATE_NEXT);
+      turnRight(n_angle, n_pwm, 0);
       break;
     case 4: 
-      moveForward(15, 30, STATE_NEXT);
-      break;
-    case 5:
-      turnLeft(90, 30,STATE_NEXT);
-      break;
-    case 6: 
-      moveForward(20, 30,STATE_NEXT);
-      break;
-    case 7:
-      grabRightArm();
-      state.wait(300,STATE_NEXT);
-      break;
-    case 8: 
-      moveForward(7, 30,STATE_NEXT);
-      break;
-    case 9:
-      turnRight(90, 30,STATE_NEXT);
-      break;
-    case 10: 
-     // openLeftClaw();
-   //   openRightClaw();
-      moveForward(21, 30,STATE_NEXT);
-      break;
-  /*  case 11: 
-      grabLeftClaw();
-      grabRightClaw();
-      state.wait(500,STATE_NEXT);
-      break;  
-    case 12:
-      riseLift();
-      state.wait(700,STATE_NEXT);
-      break;*/
-    case 11:
-      turnRight(30, 30,STATE_NEXT);
-      break;
-    case 12: 
-      moveBackward(12, 30,STATE_NEXT);
-      break;
-    case 13:
-      turnLeft(30, 30,STATE_NEXT);
-      break;
-    case 14: 
-      moveForward(17, 30,STATE_NEXT);
-      break;
-    case 15: 
-      openLeftArm();
-      state.wait(100,STATE_NEXT);
-      break;
-    case 16: 
-      moveBackward(30, 30,STATE_NEXT);
-      break;
-    case 17: 
-      closeLeftArm();
-      state.wait(100,STATE_NEXT);
-      break;
-    case 18: 
-      moveBackward(30, 30,STATE_NEXT);
-      break;
-    case 19: 
-      openLeftArm();
-      state.wait(100,STATE_NEXT);
-      break;
-    case 20: 
-      moveBackward(30, 30,STATE_STOP);
+      moveBackward(n_dist, n_pwm, 0);
       break;
     case STATE_STOP:
       break;
