@@ -1,8 +1,7 @@
 #include "VisionBase.h"
 
 void VisionBase::init()
-{
-  
+{  
   sideButton.initPin(startButtonPin);
   sideButton.setAsPullup();
   
@@ -24,9 +23,9 @@ void VisionBase::init()
     
   attachServoz();
 
-  directionMovement = NONE;
+  directionMovement = NONE;  
   ignoredSensors = false;
-  
+  /*
   if(sideButton.detect())
     state = YELLOW_SIDE;
   else
@@ -34,7 +33,7 @@ void VisionBase::init()
     state = GREEN_SIDE;    
     pinMode(greenLed, OUTPUT);
     digitalWrite(greenLed, HIGH);
-  }
+  }*/
 }
 void VisionBase::attachServoz()
 {
@@ -64,7 +63,12 @@ void VisionBase::moveForward(int distance, int pwmv, int nextState)
     isResuming = false;
     pwmValue = pwmv;
   }
-  doDistanceInCM(distance, nextState);
+  int state_next = 0;
+  if(nextState == STATE_NEXT)
+    state_next = state + 1;
+  else
+    state_next = nextState;
+  doDistanceInCM(distance, state_next);
 }
 void VisionBase::moveBackward(int distance,int pwmv, int nextState)
 {  
@@ -81,7 +85,12 @@ void VisionBase::moveBackward(int distance,int pwmv, int nextState)
     isResuming = false;
     pwmValue = pwmv;
   }
-  doDistanceInCM(distance, nextState);
+  int state_next = 0;
+  if(nextState == STATE_NEXT)
+    state_next = state + 1;
+  else
+    state_next = nextState;
+  doDistanceInCM(distance, state_next);
 }
 void VisionBase::turnLeft(int angle,int pwmv, int nextState)
 {  
@@ -98,7 +107,12 @@ void VisionBase::turnLeft(int angle,int pwmv, int nextState)
     isResuming = false;
     pwmValue = pwmv;
   }
-  doAngleRotation(angle, nextState);
+  int state_next = 0;
+  if(nextState == STATE_NEXT)
+    state_next = state + 1;
+  else
+    state_next = nextState;
+  doAngleRotation(angle, state_next);
 }
 
 void VisionBase::turnRight(int angle,int pwmv, int nextState)
@@ -116,7 +130,12 @@ void VisionBase::turnRight(int angle,int pwmv, int nextState)
     isResuming = false;
     pwmValue = pwmv;
   }
-  doAngleRotation(angle, nextState);
+  int state_next = 0;
+  if(nextState == STATE_NEXT)
+    state_next = state + 1;
+  else
+    state_next = nextState;
+  doAngleRotation(angle, state_next);
 }
 
 float VisionBase::cmToSteps(float value)
@@ -145,16 +164,13 @@ void VisionBase::doDistanceInCM(int dist, int nextState)
     if(!leftMotor.isOn && !rightMotor.isOn && !isPaused)
     {
       newMovement = false;
-      if(nextState == STATE_NEXT)
-        state++;
-      else
-        state = nextState;
+      state = nextState;
     }
   }
 }
 void VisionBase::doAngleRotation(int dist, int nextState)
 {
-  float steps = cmToSteps(2 * angleToSteps(dist));
+  float steps = cmToSteps(angleToSteps(dist));
   if(!newMovement)
   {
     newMovement = true;
@@ -170,10 +186,7 @@ void VisionBase::doAngleRotation(int dist, int nextState)
     if(!leftMotor.isOn && !rightMotor.isOn && !isPaused)
     {
       newMovement = false;
-      if(nextState == STATE_NEXT)
-        state++;
-      else
-        state = nextState;
+      state = nextState;
     }
   }
 }
@@ -196,6 +209,12 @@ void VisionBase::unpause()
 int integral, last;
 void VisionBase::update()
 {
+  /*
+  Serial.print(" L: ");
+  Serial.print(leftEncoder.getPosition());
+  Serial.print(" R: ");
+  Serial.println(rightEncoder.getPosition());
+ */
   if(directionMovement == FRONT)
   {
     int threshold = pwmValue - 10;
@@ -223,51 +242,42 @@ void VisionBase::doLoop()
   switch(state)
   {
     case 0: 
-      moveForward(30, 50,1);
-      break; 
-    case 1: 
-      turnLeft(90, 50,2);
-      break;
-    case 2:
-      break; 
-    
-/*    case 0: 
-      moveForward(45, 50, STATE_NEXT);
+      moveForward(45, 30, STATE_NEXT);
       break;
     case 1:
-      turnRight(90, 50, STATE_NEXT);
+      turnRight(90, 30, STATE_NEXT);
       break;
     case 2: 
       openRightArm();
-      moveForward(45, 50, STATE_NEXT);
+      moveForward(45, 30, STATE_NEXT);
       break;
     case 3:
-      turnRight(90, 50, STATE_NEXT);
+      turnRight(90, 30, STATE_NEXT);
       break;
     case 4: 
-      moveForward(15, 50, STATE_NEXT);
+      moveForward(15, 30, STATE_NEXT);
       break;
     case 5:
-      turnLeft(90, 50,STATE_NEXT);
+      turnLeft(90, 30,STATE_NEXT);
       break;
     case 6: 
-      moveForward(20, 50,STATE_NEXT);
+      moveForward(20, 30,STATE_NEXT);
       break;
     case 7:
       grabRightArm();
       state.wait(300,STATE_NEXT);
       break;
     case 8: 
-      moveForward(7, 50,STATE_NEXT);
+      moveForward(7, 30,STATE_NEXT);
       break;
     case 9:
-      turnRight(90, 50,STATE_NEXT);
+      turnRight(90, 30,STATE_NEXT);
       break;
     case 10: 
      // openLeftClaw();
    //   openRightClaw();
-      moveForward(21, 50,STATE_NEXT);
-      break;*/
+      moveForward(21, 30,STATE_NEXT);
+      break;
   /*  case 11: 
       grabLeftClaw();
       grabRightClaw();
@@ -278,43 +288,46 @@ void VisionBase::doLoop()
       state.wait(700,STATE_NEXT);
       break;*/
     case 11:
-      turnRight(30, 50,STATE_NEXT);
+      turnRight(30, 30,STATE_NEXT);
       break;
     case 12: 
-      moveBackward(12, 50,STATE_NEXT);
+      moveBackward(12, 30,STATE_NEXT);
       break;
     case 13:
-      turnLeft(30, 50,STATE_NEXT);
+      turnLeft(30, 30,STATE_NEXT);
       break;
     case 14: 
-      moveForward(17, 50,STATE_NEXT);
+      moveForward(17, 30,STATE_NEXT);
       break;
     case 15: 
       openLeftArm();
       state.wait(100,STATE_NEXT);
       break;
     case 16: 
-      moveBackward(30, 50,STATE_NEXT);
+      moveBackward(30, 30,STATE_NEXT);
       break;
     case 17: 
       closeLeftArm();
       state.wait(100,STATE_NEXT);
       break;
     case 18: 
-      moveBackward(30, 50,STATE_NEXT);
+      moveBackward(30, 30,STATE_NEXT);
       break;
     case 19: 
       openLeftArm();
       state.wait(100,STATE_NEXT);
       break;
     case 20: 
-      moveBackward(30, 50,STATE_STOP);
+      moveBackward(30, 30,STATE_STOP);
       break;
     case STATE_STOP:
       break;
     default:
       state.doLoop();   
   }
+  
+  leftEncoder.updatePosition();
+  rightEncoder.updatePosition();
     
   if(liftLimitatorSensor.detect() && goingUp == true)
   {
