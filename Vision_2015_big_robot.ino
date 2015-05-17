@@ -3,7 +3,8 @@
 #include <LiquidCrystal.h>
 #include <TimerThree.h>
 #include <Servo.h> 
-#include "VisionStepper.h"
+#include "VisionDC.h"
+#include "VisionEncoders.h"
 #include "VisionBase.h"
 #include "VisionState.h"
 #include "pins.h"
@@ -15,8 +16,7 @@ VisionBase base;
 elapsedMillis timeUpTimer, enemyTimer, initTimer;
 boolean stoppedEverything = true; 
 boolean initialisation = true;
-
-VisionState movementState;
+VisionState state;
 
 VisionSensor startButton;
 void setup()
@@ -34,138 +34,26 @@ void setup()
  // base.lowerLift();
   stoppedEverything = false;
  // movementState = 12;
-    
-  base.setTacticDelays(CLASSIC_START);
 }
 
 void loop()
 { /* 
   if(initialisation)
     initLift();*/
+    
+  switch (state)
+  {  
+    case 0:      
+      base.update();
+      state.waitMicros(10000, 0);
+      break;
+    default:
+      state.doLoop();
+  }   
+  
   if(!stoppedEverything)
   {
-    base.doLoop();
-     
-    switch(movementState)
-    {/*
-      case 0: 
-        base.openLeftClaw();
-        base.openRightClaw();
-        base.moveForward(30, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break; 
-      case 1: 
-        base.grabLeftClaw();
-        base.grabRightClaw();
-        movementState.wait(1000,STATE_NEXT);
-        break;
-      case 2:
-        base.riseLift();
-        movementState.wait(100,STATE_STOP);
-        break; */
-      
-      case 0: 
-        base.moveForward(45, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 1:
-        base.turnRight(90);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 2: 
-        base.openRightArm();
-        base.moveForward(45, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 3:
-        base.turnRight(90);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 4: 
-        base.moveForward(15, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 5:
-        base.turnLeft(90);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 6: 
-        base.moveForward(20, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 7:
-        base.grabRightArm();
-        movementState.wait(300,STATE_NEXT);
-        break;
-      case 8: 
-        base.moveForward(7, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 9:
-        base.turnRight(90);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 10: 
-       // base.openLeftClaw();
-     //   base.openRightClaw();
-        base.moveForward(21, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-    /*  case 11: 
-        base.grabLeftClaw();
-        base.grabRightClaw();
-        movementState.wait(500,STATE_NEXT);
-        break;  
-      case 12:
-        base.riseLift();
-        movementState.wait(700,STATE_NEXT);
-        break;*/
-      case 11:
-        base.turnRight(30);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 12: 
-        base.moveBackward(12, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 13:
-        base.turnLeft(30);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 14: 
-        base.moveForward(17, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 15: 
-        base.openLeftArm();
-        movementState.wait(100,STATE_NEXT);
-        break;
-      case 16: 
-        base.moveBackward(30, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 17: 
-        base.closeLeftArm();
-        movementState.wait(100,STATE_NEXT);
-        break;
-      case 18: 
-        base.moveBackward(30, 4000);
-        movementState.waitFor(baseStop,STATE_NEXT);
-        break;
-      case 19: 
-        base.openLeftArm();
-        movementState.wait(100,STATE_NEXT);
-        break;
-      case 20: 
-        base.moveBackward(30, 4000);
-        movementState.waitFor(baseStop,STATE_STOP);
-        break;
-      case STATE_STOP:
-        break;
-      default:
-        movementState.doLoop();   
-    }
-        
+    base.doLoop();        
     checkForObstacle();
   }
   testIfTimeUp();
@@ -188,24 +76,19 @@ void testIfTimeUp()
 void timeIsUpStopEverything()
 {
   stoppedEverything = true;
-  movementState = STATE_STOP;
+  state = STATE_STOP;
   base.stopNow();
 }
 
 void checkForObstacle()
 {
-  if(!base.isStopped())
+  if(!base.isStopped)
   {
     if(base.frontDetected() == true ) 
       enemyTimer = 0;
-    if(base.frontDetected() == true && !base.isPaused() && !base.ignoredSensors)   
+    if(base.frontDetected() == true && !base.isPaused && !base.ignoredSensors)   
       base.pause();
-    else if(base.frontDetected() == false && base.isPaused() && enemyTimer > 500L)
+    else if(base.frontDetected() == false && base.isPaused && enemyTimer > 500L)
       base.unpause();
   }
-}
-
-boolean baseStop()
-{
-  return base.isStopped();
 }

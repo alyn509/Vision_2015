@@ -7,18 +7,12 @@ void VisionBase::init()
   
   liftLimitatorSensor.initPin(liftLimitatorSensorPin);
   liftLimitatorSensor.setAsPullup();
-    
-  leftMotor.init();
-  leftMotor.initDirectionForward(HIGH);
-  leftMotor.initPins(leftMotorEnablePin, leftMotorDirectionPin, leftMotorStepPin);
-  leftMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
-  leftMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);    
+   
+  leftMotor.init(leftMotorFw, leftMotorBw);
+  rightMotor.init(rightMotorFw, rightMotorBw);
   
-  rightMotor.init();
-  rightMotor.initDirectionForward(LOW);
-  rightMotor.initPins(rightMotorEnablePin, rightMotorDirectionPin, rightMotorStepPin);
-  rightMotor.initDelays(defaultStartSpeedDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
-  rightMotor.initSizes(wheelDiameter, wheelRevolutionSteps,distanceBetweenWheels);   
+  leftEncoder.init(leftEncoderStepPin);
+  rightEncoder.init(rightEncoderStepPin); 
     
   pinMode(popCornGrabberDCPin, OUTPUT);
   pinMode(upLiftPin, OUTPUT);
@@ -47,98 +41,168 @@ void VisionBase::attachServoz()
   rightDoor.attach(rightDoorServoPin);
 }
 
-void VisionBase::setTacticDelays(int tactic)
-{
-  rightMotor.setTacticDelays(tactic);
-  leftMotor.setTacticDelays(tactic);
-}
-
-void VisionBase::setStartDelays(unsigned long startDelay)
-{
-  rightMotor.initDelays(startDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
-  leftMotor.initDelays(startDelay, highPhaseDelay, pauseSpeedDelay, delayBeforeTurnOff);
-}
-
-void VisionBase::moveForward(float distance, unsigned long step_delay)
-{       
-  directionMovement = FRONT;
-  
-  doMovementRequirements(step_delay);  
-  
-  leftMotor.setDirectionForward();
-  rightMotor.setDirectionForward(); 
-  
-  leftMotor.doDistanceInCm(distance);
-  rightMotor.doDistanceInCm(distance);
-}
-
-void VisionBase::moveBackward(float distance, unsigned long step_delay)
-{    
-  directionMovement = BACK;   
-
-  doMovementRequirements(step_delay);
-
-  leftMotor.setDirectionBackward();
-  rightMotor.setDirectionBackward();  
-  
-  leftMotor.doDistanceInCm(distance);
-  rightMotor.doDistanceInCm(distance);
-}
-
-void VisionBase::turnLeft(int angle)
-{
-  directionMovement = LEFT; 
-
-  doMovementRequirements(5000);
-  
-  leftMotor.setDirectionBackward();
-  rightMotor.setDirectionForward();
-  
-  leftMotor.doRotationInAngle(angle);
-  rightMotor.doRotationInAngle(angle); 
-}
-
-void VisionBase::turnRight(int angle)
+void VisionBase::moveForward(int distance, int pwmv, int nextState)
 {  
-  directionMovement = RIGHT;
-  
-  doMovementRequirements(5000);
-    
-  leftMotor.setDirectionForward();
-  rightMotor.setDirectionBackward();
-  
-  leftMotor.doRotationInAngle(angle);
-  rightMotor.doRotationInAngle(angle);
-  
+  if(!newMovement || isResuming)
+  {  
+    directionMovement = FRONT;
+    leftMotor.moveForward(pwmv);
+    rightMotor.moveForward(pwmv);
+    if(!isResuming)
+    {
+      leftEncoder.resetPosition();
+      rightEncoder.resetPosition();
+    }
+    isResuming = false;
+    pwmValue = pwmv;
+  }
+  doDistanceInCM(distance, nextState);
+}
+void VisionBase::moveBackward(int distance,int pwmv, int nextState)
+{  
+  if(!newMovement || isResuming)
+  {  
+    directionMovement = FRONT;
+    leftMotor.moveBackward(pwmv);
+    rightMotor.moveBackward(pwmv);
+    if(!isResuming)
+    {
+      leftEncoder.resetPosition();
+      rightEncoder.resetPosition();
+    }
+    isResuming = false;
+    pwmValue = pwmv;
+  }
+  doDistanceInCM(distance, nextState);
+}
+void VisionBase::turnLeft(int angle,int pwmv, int nextState)
+{  
+  if(!newMovement || isResuming)
+  {  
+    directionMovement = LEFT;
+    leftMotor.moveBackward(pwmv);
+    rightMotor.moveForward(pwmv);
+    if(!isResuming)
+    {
+      leftEncoder.resetPosition();
+      rightEncoder.resetPosition();
+    }
+    isResuming = false;
+    pwmValue = pwmv;
+  }
+  doAngleRotation(angle, nextState);
 }
 
-void VisionBase::doMovementRequirements(int step_delay)
-{
-  leftMotor.setTargetDelay(step_delay);
-  rightMotor.setTargetDelay(step_delay);
+void VisionBase::turnRight(int angle,int pwmv, int nextState)
+{    
+  if(!newMovement || isResuming)
+  {  
+    directionMovement = RIGHT;
+    leftMotor.moveForward(pwmv);
+    rightMotor.moveBackward(pwmv);
+    if(!isResuming)
+    {
+      leftEncoder.resetPosition();
+      rightEncoder.resetPosition();
+    }
+    isResuming = false;
+    pwmValue = pwmv;
+  }
+  doAngleRotation(angle, nextState);
 }
 
-void VisionBase::setSpecial()
+float VisionBase::cmToSteps(float value)
 {
-  leftMotor.setSpecial();
-  rightMotor.setSpecial();
+  return (1.0 * value * encoderResolution) / (PI * wheelDiameter);
 }
-
-void VisionBase::resetSpecial()
+float VisionBase::angleToSteps(float value)
 {
-  leftMotor.resetSpecial();
-  rightMotor.resetSpecial();
+  return (1.0 * value * distanceBetweenWheels * PI) / 360.0;
+}
+void VisionBase::doDistanceInCM(int dist, int nextState)
+{
+  float steps = cmToSteps(dist);
+  if(!newMovement)
+  {
+    newMovement = true;
+    lastPositionLeft = leftEncoder.getPosition();
+    lastPositionRight = rightEncoder.getPosition();
+  }
+  else
+  {
+    if(leftEncoder.getPosition() - lastPositionLeft >= steps)
+      leftMotor.stopMotor();
+    if(rightEncoder.getPosition() - lastPositionRight >= steps)
+      rightMotor.stopMotor();
+    if(!leftMotor.isOn && !rightMotor.isOn && !isPaused)
+    {
+      newMovement = false;
+      if(nextState == STATE_NEXT)
+        state++;
+      else
+        state = nextState;
+    }
+  }
+}
+void VisionBase::doAngleRotation(int dist, int nextState)
+{
+  float steps = cmToSteps(2 * angleToSteps(dist));
+  if(!newMovement)
+  {
+    newMovement = true;
+    lastPositionLeft = leftEncoder.getPosition();
+    lastPositionRight = rightEncoder.getPosition();
+  }
+  else
+  {
+    if(leftEncoder.getPosition() - lastPositionLeft >= steps)
+      leftMotor.stopMotor();
+    if(rightEncoder.getPosition() - lastPositionRight >= steps)
+      rightMotor.stopMotor();
+    if(!leftMotor.isOn && !rightMotor.isOn && !isPaused)
+    {
+      newMovement = false;
+      if(nextState == STATE_NEXT)
+        state++;
+      else
+        state = nextState;
+    }
+  }
 }
 
 void VisionBase::pause()
 { 
-  leftMotor.pause();
-  rightMotor.pause();
+  isPaused = true;
+  stateBeforePause = state;
+  state = PAUSED;
+  rightMotor.stopMotor();      
+  leftMotor.stopMotor(); 
 }
 void VisionBase::unpause()
 {
-  leftMotor.unpause();
-  rightMotor.unpause();
+  state = stateBeforePause;
+  isPaused = false;
+  isResuming = true;
+}
+
+int integral, last;
+void VisionBase::update()
+{
+  if(directionMovement == FRONT)
+  {
+    int threshold = pwmValue - 10;
+    int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
+    int deriv = difference - last;
+    last = difference;
+    integral += difference;
+    int turn = 2.0 * difference + 0.0 * integral + 0.0 * deriv;
+    if (turn > threshold) turn = threshold;
+    if (turn < -threshold) turn = -threshold;
+    if (leftMotor.isOn)
+      leftMotor.moveForward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveForward(pwmValue + turn);
+  }
 }
 
 bool VisionBase::frontDetected()
@@ -146,20 +210,110 @@ bool VisionBase::frontDetected()
   return frontLeftSensor.detect() || frontRightSensor.detect();
 }
 
-bool VisionBase::isStopped()
-{
-  return rightMotor.isOff();
-}
-
-bool VisionBase::isPaused()
-{
-  return rightMotor.isPaused();
-}
-
 void VisionBase::doLoop()
-{
-  leftMotor.doLoop();
-  rightMotor.doLoop();
+{   
+  switch(state)
+  {/*
+    case 0: 
+      openLeftClaw();
+      openRightClaw();
+      moveForward(30, 50,1);
+      break; 
+    case 1: 
+      grabLeftClaw();
+      grabRightClaw();
+      state.wait(1000,STATE_NEXT);
+      break;
+    case 2:
+      riseLift();
+      state.wait(100,STATE_STOP);
+      break; */
+    
+    case 0: 
+      moveForward(45, 50, STATE_NEXT);
+      break;
+    case 1:
+      turnRight(90, 50, STATE_NEXT);
+      break;
+    case 2: 
+      openRightArm();
+      moveForward(45, 50, STATE_NEXT);
+      break;
+    case 3:
+      turnRight(90, 50, STATE_NEXT);
+      break;
+    case 4: 
+      moveForward(15, 50, STATE_NEXT);
+      break;
+    case 5:
+      turnLeft(90, 50,STATE_NEXT);
+      break;
+    case 6: 
+      moveForward(20, 50,STATE_NEXT);
+      break;
+    case 7:
+      grabRightArm();
+      state.wait(300,STATE_NEXT);
+      break;
+    case 8: 
+      moveForward(7, 50,STATE_NEXT);
+      break;
+    case 9:
+      turnRight(90, 50,STATE_NEXT);
+      break;
+    case 10: 
+     // openLeftClaw();
+   //   openRightClaw();
+      moveForward(21, 50,STATE_NEXT);
+      break;
+  /*  case 11: 
+      grabLeftClaw();
+      grabRightClaw();
+      state.wait(500,STATE_NEXT);
+      break;  
+    case 12:
+      riseLift();
+      state.wait(700,STATE_NEXT);
+      break;*/
+    case 11:
+      turnRight(30, 50,STATE_NEXT);
+      break;
+    case 12: 
+      moveBackward(12, 50,STATE_NEXT);
+      break;
+    case 13:
+      turnLeft(30, 50,STATE_NEXT);
+      break;
+    case 14: 
+      moveForward(17, 50,STATE_NEXT);
+      break;
+    case 15: 
+      openLeftArm();
+      state.wait(100,STATE_NEXT);
+      break;
+    case 16: 
+      moveBackward(30, 50,STATE_NEXT);
+      break;
+    case 17: 
+      closeLeftArm();
+      state.wait(100,STATE_NEXT);
+      break;
+    case 18: 
+      moveBackward(30, 50,STATE_NEXT);
+      break;
+    case 19: 
+      openLeftArm();
+      state.wait(100,STATE_NEXT);
+      break;
+    case 20: 
+      moveBackward(30, 50,STATE_STOP);
+      break;
+    case STATE_STOP:
+      break;
+    default:
+      state.doLoop();   
+  }
+    
   if(liftLimitatorSensor.detect() && goingUp == true)
   {
     digitalWrite(upLiftPin, LOW);  
@@ -168,9 +322,10 @@ void VisionBase::doLoop()
 }
 
 void VisionBase::stopNow()
-{    
-  leftMotor.stopNow();
-  rightMotor.stopNow();
+{      
+  rightMotor.stopMotor();      
+  leftMotor.stopMotor();  
+  isStopped = true;
 }
 /********************************************************* Servoz *********************************************************/
 void VisionBase::openLeftArm()

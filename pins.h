@@ -27,7 +27,7 @@ const int popCornGrabberDCPin = 12;           // dc rotating continous
 
 const int upLiftPin = A0;                     // bring lift up
 const int downLiftPin = A1;                   // bring lift down
-
+/*
 const int leftMotorEnablePin = 50;
 const int leftMotorStepPin = 52;
 const int leftMotorDirectionPin = 48;
@@ -35,12 +35,15 @@ const int leftMotorDirectionPin = 48;
 const int rightMotorEnablePin = 42;
 const int rightMotorStepPin = 46;
 const int rightMotorDirectionPin = 44;
+*/
+const int leftMotorFw = 999;
+const int leftMotorBw = 999;
+
+const int rightMotorFw = 999;
+const int rightMotorBw = 999;
 
 const int leftEncoderStepPin = A5;
-const int leftEncoderBPin = A4;
-
 const int rightEncoderStepPin = A3;
-const int rightEncoderBPin = A2;
 
 #endif
 
