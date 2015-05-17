@@ -290,8 +290,8 @@ void VisionBase::doLoop()
     case 23: turnRight(60, 30, STATE_NEXT);break;
     case 24: moveForward(60, 30, STATE_NEXT);break;
     case 25: turnRight(30, 30, STATE_NEXT);break;
-    case 26: moveForward(20, 30, STATE_NEXT);break;
-    case 27: turnRight(90, 30, STATE_NEXT);break;
+    case 26: moveForward(35, 30, STATE_NEXT);break;
+    case 27: turnLeft(90, 30, STATE_NEXT);break;
     case 28: moveForward(30, 30, STATE_NEXT);break;
     case 29: moveBackward(30, 30, STATE_NEXT);break;
     case STATE_STOP:
