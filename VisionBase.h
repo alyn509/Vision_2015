@@ -2,8 +2,10 @@
 #define VisionBase_h
 
 #include "Arduino.h"
-#include "VisionStepper.h"
+#include "VisionDC.h"
 #include "VisionSensor.h"
+#include "VisionState.h"
+#include "VisionEncoders.h"
 #include "pins.h"
 #include "constants.h"
 #include <elapsedMillis.h>
@@ -15,46 +17,47 @@
 #define LEFT 1
 #define RIGHT 2
 
+#define PAUSED 500
+#define OVER 501
+#define HOMOLOGATION 400
+#define YELLOW_SIDE 0
+#define GREEN_SIDE 100
+
 class VisionBase {
   public:
     void init();
-    void setStartDelays(unsigned long startDelay);
-    void setTacticDelays(int tactic);
     
-    void moveForward(float distance, unsigned long step_delay);
-    void moveBackward(float distance, unsigned long step_delay);
+    void moveForward(int distance,int pwm, int nextState);
+    void moveBackward(int distance,int pwm, int nextState);
     
     boolean frontDetected();
     
-    void turnLeft(int angle);
-    void turnRight(int angle);
+    void turnLeft(int angle,int pwmv, int nextState);
+    void turnRight(int angle,int pwmv, int nextState);
     
-    void doMovementRequirements(int step_delay);
+    float cmToSteps(float value);
+    float angleToSteps(float value);
+    
+    void doDistanceInCM(int dist, int nextState);
+    void doAngleRotation(int dist, int nextState);
     
     void pause();
     void unpause();
+    
     void stopNow();
+    
     void doLoop();
-    
-    void setSpecial();
-    void resetSpecial();
-    
-    boolean isStopped();
-    boolean isPaused();
+    void update();
+            
+    void attachServoz();
     
     /************************************************** Servoz ***************************************************/
     
     void openLeftArm();     void closeLeftArm();     void grabLeftArm();
     void openRightArm();    void closeRightArm();    void grabRightArm();
     
-    void openLeftClaw();     void closeLeftClaw();     void grabLeftClaw();
-    void openRightClaw();    void closeRightClaw();    void grabRightClaw();
-    
-    void holdLeftLimitator();     void releaseLeftLimitator();
-    void holdRightLimitator();    void releaseRightLimitator();
-
-    void openLeftDoow();     void closeLeftDoor();
-    void openRightDoor();    void closeRightDoor();
+    void openClaw();     void closeClaw();     void grabClaw(); 
+    void openDoow();     void closeDoor();
     
     void releaseLeftPopcorn();
     void releaseRightPopcorn();
@@ -69,19 +72,28 @@ class VisionBase {
     /******************************************************************************************************/
         
   public:
-    VisionStepper leftMotor, rightMotor;
+    VisionDC leftMotor, rightMotor;
+    VisionEncoders leftEncoder, rightEncoder;
+    VisionState state;
     
-    Servo leftClaw, rightClaw,
-          leftLimitator, rightLimitator,
+    Servo claw, door,
           leftPopcornHolder, rightPopcornHolder,
-          leftArm, rightArm,
-          leftDoor, rightDoor;
+          leftArm, rightArm;
           
-    VisionSensor frontLeftSensor, frontRightSensor, liftLimitatorSensor;
+    VisionSensor frontLeftSensor, frontRightSensor, liftLimitatorSensor, sideButton;
     
+    int pwmValue = 0;
     int directionMovement;
+    int stateBeforePause;
+    float lastPositionLeft = 0;
+    float lastPositionRight = 0;
     
-    bool ignoredSensors;
+    bool isPaused = false;
+    bool isResuming = false;
+    bool isStopped = false;
+    bool ignoredSensors = false;
+    bool newMovement = false;
+    bool goingUp = false;
 };
 
 #endif

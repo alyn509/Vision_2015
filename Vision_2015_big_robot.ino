@@ -2,7 +2,8 @@
 #include <Stepper.h>
 #include <LiquidCrystal.h>
 #include <Servo.h> 
-#include "VisionStepper.h"
+#include "VisionDC.h"
+#include "VisionEncoders.h"
 #include "VisionBase.h"
 #include "VisionState.h"
 #include "pins.h"
@@ -13,30 +14,39 @@
 VisionBase base;
 elapsedMillis timeUpTimer, enemyTimer;
 boolean stoppedEverything = true; 
-
-VisionState movementState;
+VisionState state;
 
 VisionSensor startButton;
 void setup()
 {   
   pinMode(3, OUTPUT);
   digitalWrite(3, LOW);    // we set pin 3 as GND.. because of Claudiu
+  
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
   while(startButton.detect());
-  delay(50);
+  
   Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
+  delay(50);
   stoppedEverything = false;
-    
-  base.setTacticDelays(CLASSIC_START);
 }
 
 char c1, c2;
 int n_read, n_angle = 90, n_dist = 100, n_wait = 100, n_tdelay;
 void loop()
-{  
+{   
+  switch (state)
+  {  
+    case 0:      
+      base.update();
+      state.waitMicros(10000, 0);
+      break;
+    default:
+      state.doLoop();
+  }   
+  
   if(!stoppedEverything)
   {
     base.doLoop();
@@ -231,7 +241,6 @@ void loop()
       default:
         movementState.doLoop();   
     }
-        
     checkForObstacle();
   }
   testIfTimeUp();
@@ -246,24 +255,19 @@ void testIfTimeUp()
 void timeIsUpStopEverything()
 {
   stoppedEverything = true;
-  movementState = STATE_STOP;
+  state = STATE_STOP;
   base.stopNow();
 }
 
 void checkForObstacle()
 {
-  if(!base.isStopped())
+  if(!base.isStopped)
   {
     if(base.frontDetected() == true ) 
       enemyTimer = 0;
-    if(base.frontDetected() == true && !base.isPaused() && !base.ignoredSensors)   
+    if(base.frontDetected() == true && !base.isPaused && !base.ignoredSensors)   
       base.pause();
-    else if(base.frontDetected() == false && base.isPaused() && enemyTimer > 500L)
+    else if(base.frontDetected() == false && base.isPaused && enemyTimer > 500L)
       base.unpause();
   }
-}
-
-boolean baseStop()
-{
-  return base.isStopped();
 }
