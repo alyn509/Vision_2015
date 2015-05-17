@@ -336,13 +336,22 @@ void VisionBase::doLoop()
       turnRight(20, 30,STATE_NEXT);
       break;
     case 19: 
-      moveForward(5, 30,STATE_NEXT);
+      moveForward(12, 30,STATE_NEXT);
       break;
     case 20:
-      turnRight(70, 30,STATE_NEXT);
+      turnRight(164, 30,STATE_NEXT);
       break;
     case 21: 
-      moveForward(20, 30,STATE_NEXT);
+      moveForward(32, 30, 30);
+      break;
+      
+      //ridicat si schimbat in stateul anterior
+
+    case 30:
+      turnLeft(60, 30, STATE_NEXT);
+      break;
+    case 31: 
+      moveForward(40, 30, STATE_NEXT);
       break;
     case STATE_STOP:
       break;
