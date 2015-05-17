@@ -353,6 +353,7 @@ void VisionBase::doLoop()
             Serial.print("n_angle ");Serial.print(n_angle);Serial.print(" (degrees) - used for left and right base rotation\n");
             Serial.print("n_dist ");Serial.print(n_dist);Serial.print(" (cm) - used for forward and backward base movement\n");
             Serial.print("n_wait ");Serial.print(n_wait);Serial.print(" (ms) - used to wait after servo movements\n");
+            Serial.print("n_pwm ");Serial.print(n_pwm);Serial.print(" (duty cycle 0-255) - pwm used for all base movements\n");
             Serial.print("n_tdelay ");Serial.print(n_tdelay);Serial.print(" (ms) - unused\n");
             break;
           default:
