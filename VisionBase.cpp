@@ -339,19 +339,52 @@ void VisionBase::doLoop()
       moveForward(12, 30,STATE_NEXT);
       break;
     case 20:
-      turnRight(164, 30,STATE_NEXT);
+      turnRight(60, 30,STATE_NEXT);
       break;
-    case 21: 
-      moveForward(32, 30, 30);
+    //calibrare
+    case 21:
+      directionMovement = -1;
+      leftMotor.moveBackward(30);
+      rightMotor.moveBackward(30);
+      state.wait(2000, STATE_NEXT);
+      break;
+    case 22:
+      leftEncoder.resetPosition();
+      rightEncoder.resetPosition();
+      state.wait(0, STATE_NEXT);
+      break;
+    case 23: 
+      moveForward(12, 30,STATE_NEXT);
+      break;
+    case 24:
+      turnRight(90, 30,STATE_NEXT);
+      break;
+    case 25: 
+      moveForward(34, 30, 30);
       break;
       
-      //ridicat si schimbat in stateul anterior
+      //ridicat si schimbat in stateul anterior 30-ul
 
     case 30:
       turnLeft(60, 30, STATE_NEXT);
       break;
     case 31: 
-      moveForward(40, 30, STATE_NEXT);
+      moveForward(50, 30, 40);
+      break;
+      
+      //ridicat si schimbat in stateul anterior 40-ul
+      
+    case 40:
+      turnLeft(130, 30, STATE_NEXT);
+      break;
+    case 41:
+      moveForward(45, 30, STATE_NEXT);
+      break;
+    case 42:
+      turnRight(90, 30, STATE_NEXT);
+      break;
+    case 43:
+      moveForward(45, 30, STATE_NEXT);
       break;
     case STATE_STOP:
       break;
