@@ -268,123 +268,27 @@ void VisionBase::doLoop()
       moveForward(45, 30, STATE_NEXT);
       break;
     case 1:
-      turnRight(90, 30, STATE_NEXT);
+      turnRight(70, 30, STATE_NEXT);
       break;
     case 2: 
-      openRightArm();
-      moveForward(50, 30, STATE_NEXT);
+      moveBackward(67, 30, STATE_NEXT);
       break;
     case 3:
-      turnRight(90, 30, STATE_NEXT);
-      break;
-    case 4: 
-      moveForward(25, 30, STATE_NEXT);
-      break;
-    case 5:
-      turnLeft(90, 30,STATE_NEXT);
-      break;
-    case 6: 
-      moveForward(33, 30,STATE_NEXT);
-      break;
-    case 7:
-      grabRightArm();
-      state.wait(300,STATE_NEXT);
-      break;
-    case 8:
-      turnRight(120, 30,STATE_NEXT);
-      break;
-   /*  case 11: 
-      grabLeftClaw();
-      grabRightClaw();
-      state.wait(500,STATE_NEXT);
-      break;  
-    case 12:
-      riseLift();
-      state.wait(700,STATE_NEXT);
-      break;*/
-    case 9: 
-      moveBackward(8, 30,STATE_NEXT);
-      break;
-    case 10:
-      turnLeft(30, 30,STATE_NEXT);
-      break;
-    case 11: 
-      moveForward(40, 30,STATE_NEXT);
-      break;
-    case 12: 
-      openLeftArm();
-      state.wait(100,STATE_NEXT);
-      break;
-    case 13: 
-      moveBackward(30, 30,STATE_NEXT);
-      break;
-    case 14: 
-      closeLeftArm();
-      state.wait(100,STATE_NEXT);
-      break;
-    case 15: 
-      moveBackward(30, 30,STATE_NEXT);
-      break;
-    case 16: 
-      openLeftArm();
-      state.wait(100,STATE_NEXT);
-      break;
-    case 17: 
-      moveBackward(15, 30,STATE_NEXT);
-      break;
-    case 18:
-      turnRight(20, 30,STATE_NEXT);
-      break;
-    case 19: 
-      moveForward(12, 30,STATE_NEXT);
-      break;
-    case 20:
-      turnRight(60, 30,STATE_NEXT);
+      turnRight(25, 30, STATE_NEXT);
       break;
     //calibrare
-    case 21:
+    case 4:
       directionMovement = -1;
       leftMotor.moveBackward(30);
       rightMotor.moveBackward(30);
       state.wait(2000, STATE_NEXT);
       break;
-    case 22:
+    case 5:
       leftEncoder.resetPosition();
       rightEncoder.resetPosition();
-      state.wait(0, STATE_NEXT);
-      break;
-    case 23: 
-      moveForward(12, 30,STATE_NEXT);
-      break;
-    case 24:
-      turnRight(90, 30,STATE_NEXT);
-      break;
-    case 25: 
-      moveForward(34, 30, 30);
-      break;
-      
-      //ridicat si schimbat in stateul anterior 30-ul
-
-    case 30:
-      turnLeft(60, 30, STATE_NEXT);
-      break;
-    case 31: 
-      moveForward(50, 30, 40);
-      break;
-      
-      //ridicat si schimbat in stateul anterior 40-ul
-      
-    case 40:
-      turnLeft(130, 30, STATE_NEXT);
-      break;
-    case 41:
-      moveForward(45, 30, STATE_NEXT);
-      break;
-    case 42:
-      turnRight(90, 30, STATE_NEXT);
-      break;
-    case 43:
-      moveForward(45, 30, STATE_NEXT);
+      leftMotor.stopMotor();
+      rightMotor.stopMotor();
+      state.wait(3000, STATE_NEXT);
       break;
     case STATE_STOP:
       break;
