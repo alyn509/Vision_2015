@@ -21,6 +21,7 @@ void VisionBase::init()
   pinMode(upLiftPin, OUTPUT);
   pinMode(downLiftPin, OUTPUT);
     
+  state = 0;
   attachServoz();
 
   directionMovement = NONE;  
@@ -75,7 +76,7 @@ void VisionBase::moveBackward(int distance,int pwmv, int nextState)
 {  
   if(!newMovement || isResuming)
   {  
-    directionMovement = FRONT;
+    directionMovement = BACK;
     leftMotor.moveBackward(pwmv);
     rightMotor.moveBackward(pwmv);
     if(!isResuming)
@@ -216,20 +217,42 @@ void VisionBase::update()
   Serial.print(" R: ");
   Serial.println(rightEncoder.getPosition());
  */
+  int threshold = pwmValue - 10;
+  int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
+  int deriv = difference - last;
+  last = difference;
+  integral += difference;
+  int turn = 2.0 * difference + 0.0 * integral + 0.0 * deriv;
+  if (turn > threshold) turn = threshold;
+  if (turn < -threshold) turn = -threshold;
+  
   if(directionMovement == FRONT)
   {
-    int threshold = pwmValue - 10;
-    int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
-    int deriv = difference - last;
-    last = difference;
-    integral += difference;
-    int turn = 2.0 * difference + 0.0 * integral + 0.0 * deriv;
-    if (turn > threshold) turn = threshold;
-    if (turn < -threshold) turn = -threshold;
     if (leftMotor.isOn)
       leftMotor.moveForward(pwmValue - turn);
     if (rightMotor.isOn)
       rightMotor.moveForward(pwmValue + turn);
+  }
+  if(directionMovement == BACK)
+  {
+    if (leftMotor.isOn)
+      leftMotor.moveBackward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveBackward(pwmValue + turn);
+  }
+  if(directionMovement == LEFT)
+  {
+    if (leftMotor.isOn)
+      leftMotor.moveBackward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveForward(pwmValue + turn);
+  }
+  if(directionMovement == RIGHT)
+  {
+    if (leftMotor.isOn)
+      leftMotor.moveForward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveBackward(pwmValue + turn);
   }
 }
 
