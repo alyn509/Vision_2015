@@ -21,6 +21,7 @@ void VisionBase::init()
   pinMode(upLiftPin, OUTPUT);
   pinMode(downLiftPin, OUTPUT);
     
+  state = 0;
   attachServoz();
 
   directionMovement = NONE;  
@@ -74,7 +75,7 @@ void VisionBase::moveBackward(int distance,int pwmv, int nextState)
 {  
   if(!newMovement || isResuming)
   {  
-    directionMovement = FRONT;
+    directionMovement = BACK;
     leftMotor.moveBackward(pwmv);
     rightMotor.moveBackward(pwmv);
     if(!isResuming)
@@ -215,20 +216,42 @@ void VisionBase::update()
   Serial.print(" R: ");
   Serial.println(rightEncoder.getPosition());
  */
+  int threshold = pwmValue - 10;
+  int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
+  int deriv = difference - last;
+  last = difference;
+  integral += difference;
+  int turn = 2.0 * difference + 0.0 * integral + 0.0 * deriv;
+  if (turn > threshold) turn = threshold;
+  if (turn < -threshold) turn = -threshold;
+  
   if(directionMovement == FRONT)
   {
-    int threshold = pwmValue - 10;
-    int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
-    int deriv = difference - last;
-    last = difference;
-    integral += difference;
-    int turn = 2.0 * difference + 0.0 * integral + 0.0 * deriv;
-    if (turn > threshold) turn = threshold;
-    if (turn < -threshold) turn = -threshold;
     if (leftMotor.isOn)
       leftMotor.moveForward(pwmValue - turn);
     if (rightMotor.isOn)
       rightMotor.moveForward(pwmValue + turn);
+  }
+  if(directionMovement == BACK)
+  {
+    if (leftMotor.isOn)
+      leftMotor.moveBackward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveBackward(pwmValue + turn);
+  }
+  if(directionMovement == LEFT)
+  {
+    if (leftMotor.isOn)
+      leftMotor.moveBackward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveForward(pwmValue + turn);
+  }
+  if(directionMovement == RIGHT)
+  {
+    if (leftMotor.isOn)
+      leftMotor.moveForward(pwmValue - turn);
+    if (rightMotor.isOn)
+      rightMotor.moveBackward(pwmValue + turn);
   }
 }
 
@@ -249,36 +272,28 @@ void VisionBase::doLoop()
       break;
     case 2: 
       openRightArm();
-      moveForward(45, 30, STATE_NEXT);
+      moveForward(50, 30, STATE_NEXT);
       break;
     case 3:
       turnRight(90, 30, STATE_NEXT);
       break;
     case 4: 
-      moveForward(15, 30, STATE_NEXT);
+      moveForward(25, 30, STATE_NEXT);
       break;
     case 5:
       turnLeft(90, 30,STATE_NEXT);
       break;
     case 6: 
-      moveForward(20, 30,STATE_NEXT);
+      moveForward(33, 30,STATE_NEXT);
       break;
     case 7:
       grabRightArm();
       state.wait(300,STATE_NEXT);
       break;
-    case 8: 
-      moveForward(7, 30,STATE_NEXT);
+    case 8:
+      turnRight(120, 30,STATE_NEXT);
       break;
-    case 9:
-      turnRight(90, 30,STATE_NEXT);
-      break;
-    case 10: 
-     // openLeftClaw();
-   //   openRightClaw();
-      moveForward(21, 30,STATE_NEXT);
-      break;
-  /*  case 11: 
+   /*  case 11: 
       grabLeftClaw();
       grabRightClaw();
       state.wait(500,STATE_NEXT);
@@ -287,37 +302,34 @@ void VisionBase::doLoop()
       riseLift();
       state.wait(700,STATE_NEXT);
       break;*/
-    case 11:
-      turnRight(30, 30,STATE_NEXT);
+    case 9: 
+      moveBackward(8, 30,STATE_NEXT);
       break;
-    case 12: 
-      moveBackward(12, 30,STATE_NEXT);
-      break;
-    case 13:
+    case 10:
       turnLeft(30, 30,STATE_NEXT);
       break;
-    case 14: 
-      moveForward(17, 30,STATE_NEXT);
+    case 11: 
+      moveForward(40, 30,STATE_NEXT);
       break;
-    case 15: 
+    case 12: 
       openLeftArm();
       state.wait(100,STATE_NEXT);
       break;
-    case 16: 
+    case 13: 
       moveBackward(30, 30,STATE_NEXT);
       break;
-    case 17: 
+    case 14: 
       closeLeftArm();
       state.wait(100,STATE_NEXT);
       break;
-    case 18: 
+    case 15: 
       moveBackward(30, 30,STATE_NEXT);
       break;
-    case 19: 
+    case 16: 
       openLeftArm();
       state.wait(100,STATE_NEXT);
       break;
-    case 20: 
+    case 17: 
       moveBackward(30, 30,STATE_STOP);
       break;
     case STATE_STOP:
