@@ -274,6 +274,26 @@ void VisionBase::doLoop()
     case 7: moveForward(50, 30, STATE_NEXT);break;
     case 8: turnRight(90, 30, STATE_NEXT);break;
     case 9: moveForward(50, 30, STATE_NEXT);break;
+    case 10: moveBackward(20, 30, STATE_NEXT);break;
+    case 11: turnRight(85, 30, STATE_NEXT);break;
+    case 12: moveForward(100, 30, STATE_NEXT);break;
+    case 13: turnRight(35, 30, STATE_NEXT);break;
+    case 14: moveBackward(8, 30, STATE_NEXT);break;
+    case 15: turnLeft(30, 30, STATE_NEXT);break;
+    case 16: moveForward(35, 30, STATE_NEXT);break;
+    case 17: openLeftArm();state.wait(100, STATE_NEXT);break;
+    case 18: moveBackward(30, 30, STATE_NEXT);break;
+    case 19: closeLeftArm();state.wait(100, STATE_NEXT);break;
+    case 20: moveBackward(30, 30, STATE_NEXT);break;
+    case 21: openLeftArm();state.wait(100, STATE_NEXT);break;
+    case 22: moveBackward(15, 30, STATE_NEXT);break;
+    case 23: turnRight(60, 30, STATE_NEXT);break;
+    case 24: moveForward(60, 30, STATE_NEXT);break;
+    case 25: turnRight(30, 30, STATE_NEXT);break;
+    case 26: moveForward(20, 30, STATE_NEXT);break;
+    case 27: turnRight(90, 30, STATE_NEXT);break;
+    case 28: moveForward(30, 30, STATE_NEXT);break;
+    case 29: moveBackward(30, 30, STATE_NEXT);break;
     case STATE_STOP:
       break;
     default:
