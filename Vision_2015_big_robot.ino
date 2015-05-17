@@ -1,7 +1,6 @@
 #include <elapsedMillis.h>
 #include <Stepper.h>
 #include <LiquidCrystal.h>
-#include <TimerThree.h>
 #include <Servo.h> 
 #include "VisionStepper.h"
 #include "VisionBase.h"
@@ -35,7 +34,7 @@ void setup()
 }
 
 char c1, c2;
-int n_read, n_angle, n_dist, n_wait;
+int n_read, n_angle = 90, n_dist = 100, n_wait = 100, n_tdelay;
 void loop()
 {  
   if(!stoppedEverything)
@@ -55,49 +54,111 @@ void loop()
           {
             case 'n':
               Serial.print("New value: ");
-              c2 = Serial.read();
+              c2 = Serial.read();Serial.print("(");Serial.print(c2);Serial.print(") ");
               n_read = Serial.parseInt();
-              Serial.print("(");
-              Serial.print(c2);
-              Serial.print(") ");
               switch (c2)
               {
                 case 'a':
                   n_angle = n_read;
-                  Serial.print("angle");
+                  Serial.print("n_angle set to ");
                   break;
                 case 'd':
                   n_dist = n_read;
-                  Serial.print("distance");
+                  Serial.print("n_distance set to ");
                   break;
                 case 'w':
                   n_wait = n_read;
-                  Serial.print("wait");
+                  Serial.print("n_wait set to ");
+                  break;
+                case 't':
+                  n_tdelay = n_read;
+                  Serial.print("n_tdelay set to ");
                   break;
                 default:
-                  Serial.print("not recognized");
+                  Serial.print("not recognized;\npossible values:\na - n_angle\nd - n_dist\nw - n_wait\nt - n_tdelay\nfollowed by a number\n");
                   break;
               }
-              Serial.print(n_read);
+              Serial.print("#(");Serial.print(n_read);Serial.print(") ");
               break;
             case 'b':
-              c2 = Serial.read();
+              Serial.print("base ");
+              c2 = Serial.read();Serial.print("(");Serial.print(c2);Serial.print(") ");
               switch (c2)
               {
                 case 'f':
+                  Serial.print("moving forward by n_dist ");
+                  Serial.print(n_dist);
+                  base.moveForward(n_dist, 4000);
+                  movementState.waitFor(baseStop,movementState);
                   break;
                 case 'l':
+                  Serial.print("turning left by n_angle ");
+                  Serial.print(n_angle);
+                  base.turnLeft(n_angle);
+                  movementState.waitFor(baseStop,movementState);
                   break;
                 case 'r':
+                  Serial.print("turning right by n_angle ");
+                  Serial.print(n_angle);
+                  base.turnRight(n_angle);
+                  movementState.waitFor(baseStop,movementState);
                   break;
                 case 'b':
+                  Serial.print("moving backward by n_dist ");
+                  Serial.print(n_dist);
+                  base.moveBackward(n_dist, 4000);
+                  movementState.waitFor(baseStop,movementState);
+                  break;
+                default:
+                  Serial.print("not recognized;\npossible values:f-forward,l-left,r-right,b-backward");
                   break;
               }
               break;
-            default:
+            case 's':
+              Serial.print("servo ");
+              c2 = Serial.read();Serial.print("(");Serial.print(c2);Serial.print(") ");
+              switch (c2)
+              {
+                case 'q':
+                  Serial.print("test 1 - grabbing claws, opening arms then wait ");
+                  base.grabLeftClaw();
+                  base.grabRightClaw();
+                  base.openLeftArm();
+                  base.openRightArm();
+                  movementState.wait(n_wait,movementState);
+                  break;
+                case 'w':
+                  Serial.print("test 2 - closing arms then wait ");
+                  base.closeLeftArm();
+                  base.closeRightArm();
+                  movementState.wait(n_wait,movementState);
+                  break;
+                case 'e':
+                  Serial.print("test 3 - nothing ");
+                  break;
+                case 'r':
+                  Serial.print("test 4 - nothing ");
+                  break;
+                case 't':
+                  Serial.print("test 5 - nothing ");
+                  break;
+                default:
+                  Serial.print("not recognized;\npossible values:\nq-test1\nw-test2\ne-test3\nr-test4\nt-test5");
+                  break;
+              }
               break;
-            Serial.println();
+            case 'i':
+              Serial.print("Info - current values:\n");
+              Serial.print("n_angle ");Serial.print(n_angle);Serial.print(" (degrees) - used for left and right base rotation\n");
+              Serial.print("n_dist ");Serial.print(n_dist);Serial.print(" (cm) - used for forward and backward base movement\n");
+              Serial.print("n_wait ");Serial.print(n_wait);Serial.print(" (ms) - used to wait after servo movements\n");
+              Serial.print("n_tdelay ");Serial.print(n_tdelay);Serial.print(" (ms) - unused\n");
+              break;
+            default:
+              Serial.print("not recognized;\npossible values:n-number,b-base,s-servo,i-info");
+              break;
           }
+          Serial.println();
         }
         break;
       case 1:
