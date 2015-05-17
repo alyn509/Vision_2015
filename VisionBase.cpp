@@ -330,7 +330,19 @@ void VisionBase::doLoop()
       state.wait(100,STATE_NEXT);
       break;
     case 17: 
-      moveBackward(30, 30,STATE_STOP);
+      moveBackward(15, 30,STATE_NEXT);
+      break;
+    case 18:
+      turnRight(20, 30,STATE_NEXT);
+      break;
+    case 19: 
+      moveForward(5, 30,STATE_NEXT);
+      break;
+    case 20:
+      turnRight(70, 30,STATE_NEXT);
+      break;
+    case 21: 
+      moveForward(20, 30,STATE_NEXT);
       break;
     case STATE_STOP:
       break;
