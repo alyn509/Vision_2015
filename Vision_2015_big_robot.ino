@@ -1,7 +1,6 @@
 #include <elapsedMillis.h>
 #include <Stepper.h>
 #include <LiquidCrystal.h>
-#include <TimerThree.h>
 #include <Servo.h> 
 #include "VisionDC.h"
 #include "VisionEncoders.h"
