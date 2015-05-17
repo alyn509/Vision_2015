@@ -15,7 +15,7 @@ const int rightClawServoPin = 28;          // rightClaw                5 opened 
 const int leftLimitatorServoPin = 26;      // leftLimitator           13 holding  -    40 opened
 const int rightLimitatorServoPin = 36;     // rightLimitator          97 holding  -    60 opened
 
-const int leftDoorServoPin = 30;           // left door opener
+const int leftDoorServoPin = 30;           // left door opener         0 closed   -   180 opened
 const int rightDoorServoPin = 34;          // right door opener
 
 const int leftPopCornHolderPin = 38;          // left popcorn holder     180 holding  -   130 released

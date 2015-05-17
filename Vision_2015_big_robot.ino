@@ -12,8 +12,9 @@
 #define NINETYSECONDS 89000L
 
 VisionBase base;
-elapsedMillis timeUpTimer, enemyTimer;
+elapsedMillis timeUpTimer, enemyTimer, initTimer;
 boolean stoppedEverything = true; 
+boolean initialisation = true;
 
 VisionState movementState;
 
@@ -25,23 +26,44 @@ void setup()
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
   while(startButton.detect());
-  delay(50);
   Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
+  delay(50);
+  initTimer = 0;
+ // base.lowerLift();
   stoppedEverything = false;
+ // movementState = 12;
     
   base.setTacticDelays(CLASSIC_START);
 }
 
 void loop()
-{  
+{ /* 
+  if(initialisation)
+    initLift();*/
   if(!stoppedEverything)
   {
     base.doLoop();
      
     switch(movementState)
-    {
+    {/*
+      case 0: 
+        base.openLeftClaw();
+        base.openRightClaw();
+        base.moveForward(30, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break; 
+      case 1: 
+        base.grabLeftClaw();
+        base.grabRightClaw();
+        movementState.wait(1000,STATE_NEXT);
+        break;
+      case 2:
+        base.riseLift();
+        movementState.wait(100,STATE_STOP);
+        break; */
+      
       case 0: 
         base.moveForward(45, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
@@ -76,7 +98,7 @@ void loop()
         movementState.wait(300,STATE_NEXT);
         break;
       case 8: 
-        base.moveForward(5, 4000);
+        base.moveForward(7, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 9:
@@ -84,32 +106,59 @@ void loop()
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 10: 
-        base.moveForward(25, 4000);
+       // base.openLeftClaw();
+     //   base.openRightClaw();
+        base.moveForward(21, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
-      case 11: 
+    /*  case 11: 
         base.grabLeftClaw();
         base.grabRightClaw();
-        base.openLeftArm();
-        movementState.wait(100,STATE_STOP);
-        break;
-      case 12: 
-        base.moveBackward(20, 4000);
+        movementState.wait(500,STATE_NEXT);
+        break;  
+      case 12:
+        base.riseLift();
+        movementState.wait(700,STATE_NEXT);
+        break;*/
+      case 11:
+        base.turnRight(30);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
-      case 13: 
-        base.closeLeftArm();
-        base.moveForward(20, 4000);
+      case 12: 
+        base.moveBackward(12, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 13:
+        base.turnLeft(30);
         movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 14: 
-        base.openLeftArm();
-        base.moveForward(20, 4000);
-        movementState.waitFor(baseStop,STATE_STOP);
+        base.moveForward(17, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
         break;
       case 15: 
-        base.turnLeft(10);
+        base.openLeftArm();
+        movementState.wait(100,STATE_NEXT);
+        break;
+      case 16: 
+        base.moveBackward(30, 4000);
         movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 17: 
+        base.closeLeftArm();
+        movementState.wait(100,STATE_NEXT);
+        break;
+      case 18: 
+        base.moveBackward(30, 4000);
+        movementState.waitFor(baseStop,STATE_NEXT);
+        break;
+      case 19: 
+        base.openLeftArm();
+        movementState.wait(100,STATE_NEXT);
+        break;
+      case 20: 
+        base.moveBackward(30, 4000);
+        movementState.waitFor(baseStop,STATE_STOP);
         break;
       case STATE_STOP:
         break;
@@ -122,6 +171,14 @@ void loop()
   testIfTimeUp();
 }
 
+void initLift()
+{
+  if(initTimer >= 1000)  
+  {
+    base.stopLift();
+    initialisation = false;
+  }
+}
 void testIfTimeUp()
 {
   if(timeUpTimer == NINETYSECONDS)

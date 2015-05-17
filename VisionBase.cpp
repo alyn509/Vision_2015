@@ -24,23 +24,27 @@ void VisionBase::init()
   pinMode(upLiftPin, OUTPUT);
   pinMode(downLiftPin, OUTPUT);
   
-  leftClaw.attach(leftClawServoPin);                  leftClaw.write(150);
-  rightClaw.attach(rightClawServoPin);                rightClaw.write(5);
+  attachServoz();
+
+  directionMovement = NONE;
+  ignoredSensors = false;
+}
+void VisionBase::attachServoz()
+{
+  leftClaw.attach(leftClawServoPin);                  closeLeftClaw();
+  rightClaw.attach(rightClawServoPin);                closeRightClaw();
   
-  leftLimitator.attach(leftLimitatorServoPin);        leftLimitator.write(40);
-  rightLimitator.attach(rightLimitatorServoPin);      rightLimitator.write(60);
+  leftLimitator.attach(leftLimitatorServoPin);        releaseLeftLimitator();
+  rightLimitator.attach(rightLimitatorServoPin);      releaseRightLimitator();
   
   leftPopcornHolder.attach(leftPopCornHolderPin);     leftPopcornHolder.write(180);
   rightPopcornHolder.attach(rightPopCornHolderPin);   rightPopcornHolder.write(0);
   
-  leftArm.attach(leftArmServoPin);                    leftArm.write(110);
-  rightArm.attach(rightArmServoPin);                  rightArm.write(20);
+  leftArm.attach(leftArmServoPin);                    closeLeftArm();
+  rightArm.attach(rightArmServoPin);                  closeRightArm();
   
   leftDoor.attach(leftDoorServoPin);
   rightDoor.attach(rightDoorServoPin);
-
-  directionMovement = NONE;
-  ignoredSensors = false;
 }
 
 void VisionBase::setTacticDelays(int tactic)
@@ -156,6 +160,11 @@ void VisionBase::doLoop()
 {
   leftMotor.doLoop();
   rightMotor.doLoop();
+  if(liftLimitatorSensor.detect() && goingUp == true)
+  {
+    digitalWrite(upLiftPin, LOW);  
+    goingUp = false;
+  }
 }
 
 void VisionBase::stopNow()
@@ -191,7 +200,7 @@ void VisionBase::closeRightArm()
 
 void VisionBase::grabRightArm()
 {
-  rightArm.write(32);
+  rightArm.write(40);
 }
  
 void VisionBase::openLeftClaw()
@@ -246,18 +255,22 @@ void VisionBase::releaseRightLimitator()
 
 void VisionBase::openLeftDoow()    // unimplemented
 {
+  leftDoor.write(180);
 }
 
 void VisionBase::closeLeftDoor()    // unimplemented
 {
+  leftDoor.write(0);
 }
 
 void VisionBase::openRightDoor()    // unimplemented
 {
+  rightDoor.write(0);
 }
 
 void VisionBase::closeRightDoor()    // unimplemented
 {
+  rightDoor.write(0);
 }
   
 void VisionBase::releaseLeftPopcorn()
@@ -283,9 +296,15 @@ void VisionBase::stopGatherPopcorn()
 void VisionBase::riseLift()
 {
   if(!liftLimitatorSensor.detect())
+  {
     digitalWrite(upLiftPin, HIGH);
+    goingUp = true;
+  }
   else
+  {
     digitalWrite(upLiftPin, LOW);  
+    goingUp = false;
+  }
 }
 
 void VisionBase::lowerLift()

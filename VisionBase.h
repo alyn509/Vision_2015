@@ -42,6 +42,8 @@ class VisionBase {
     boolean isStopped();
     boolean isPaused();
     
+    void attachServoz();
+    
     /************************************************** Servoz ***************************************************/
     
     void openLeftArm();     void closeLeftArm();     void grabLeftArm();
@@ -82,6 +84,7 @@ class VisionBase {
     int directionMovement;
     
     bool ignoredSensors;
+    bool goingUp = false;
 };
 
 #endif
