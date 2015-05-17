@@ -3,12 +3,11 @@
   
 /******************************************************* Sensors & buttons ********************************************************/
 
-const int frontRightSensorPin = 10;
-const int frontLeftSensorPin = 11;
+const int frontRightSensorPin = 99;
+const int frontLeftSensorPin = 99;
 
 const int startButtonPin = 2;
 const int sideButtonPin = 2;
-const int greenLed = 999;
 
 /******************************************************* Device Motors ********************************************************/
 
@@ -38,8 +37,8 @@ const int rightMotorBw = 9;
 
 /******************************************************* Encoders ********************************************************/
 
-const int leftEncoderStepPin = A5;
-const int rightEncoderStepPin = A3;
+const int leftEncoderStepPin = 6;
+const int rightEncoderStepPin = 7;
 
 #endif
 

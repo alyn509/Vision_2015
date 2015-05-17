@@ -12,7 +12,7 @@ const unsigned long mediumSpeedDelay = 3000;
 const unsigned long ultraSlowSpeedDelay = 100000L;
    
 const float wheelDiameter = 9;
-const float distanceBetweenWheels = 28.8; //valoare interioara
+const float distanceBetweenWheels = 29.5; //valoare interioara
 const int wheelRevolutionSteps = 200;
 
 const int encoderResolution = 1500;
