@@ -13,9 +13,8 @@
 #define NINETYSECONDS 89000L
 
 VisionBase base;
-elapsedMillis timeUpTimer, enemyTimer, initTimer;
+elapsedMillis timeUpTimer, enemyTimer;
 boolean stoppedEverything = true; 
-boolean initialisation = true;
 VisionState state;
 
 VisionSensor startButton;
@@ -23,24 +22,20 @@ void setup()
 {   
   pinMode(3, OUTPUT);
   digitalWrite(3, LOW);    // we set pin 3 as GND.. because of Claudiu
+  
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
   while(startButton.detect());
+  
   Serial.begin(115200);
   timeUpTimer = 0;
   base.init();
   delay(50);
-  initTimer = 0;
- // base.lowerLift();
   stoppedEverything = false;
- // movementState = 12;
 }
 
 void loop()
-{ /* 
-  if(initialisation)
-    initLift();*/
-    
+{   
   switch (state)
   {  
     case 0:      
@@ -59,14 +54,6 @@ void loop()
   testIfTimeUp();
 }
 
-void initLift()
-{
-  if(initTimer >= 1000)  
-  {
-    base.stopLift();
-    initialisation = false;
-  }
-}
 void testIfTimeUp()
 {
   if(timeUpTimer == NINETYSECONDS)

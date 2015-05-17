@@ -2,6 +2,10 @@
 
 void VisionBase::init()
 {
+  
+  sideButton.initPin(startButtonPin);
+  sideButton.setAsPullup();
+  
   frontLeftSensor.initPin(frontLeftSensorPin);
   frontRightSensor.initPin(frontRightSensorPin);
   
@@ -17,28 +21,32 @@ void VisionBase::init()
   pinMode(popCornGrabberDCPin, OUTPUT);
   pinMode(upLiftPin, OUTPUT);
   pinMode(downLiftPin, OUTPUT);
-  
+    
   attachServoz();
 
   directionMovement = NONE;
   ignoredSensors = false;
+  
+  if(sideButton.detect())
+    state = YELLOW_SIDE;
+  else
+  {
+    state = GREEN_SIDE;    
+    pinMode(greenLed, OUTPUT);
+    digitalWrite(greenLed, HIGH);
+  }
 }
 void VisionBase::attachServoz()
 {
-  leftClaw.attach(leftClawServoPin);                  closeLeftClaw();
-  rightClaw.attach(rightClawServoPin);                closeRightClaw();
+  claw.attach(clawServoPin);                //closeRightClaw();
+    
+  leftPopcornHolder.attach(leftPopCornHolderPin);     //leftPopcornHolder.write(180);
+  rightPopcornHolder.attach(rightPopCornHolderPin);   //rightPopcornHolder.write(0);
   
-  leftLimitator.attach(leftLimitatorServoPin);        releaseLeftLimitator();
-  rightLimitator.attach(rightLimitatorServoPin);      releaseRightLimitator();
+  leftArm.attach(leftArmServoPin);                    //closeLeftArm();
+  rightArm.attach(rightArmServoPin);                  //closeRightArm();
   
-  leftPopcornHolder.attach(leftPopCornHolderPin);     leftPopcornHolder.write(180);
-  rightPopcornHolder.attach(rightPopCornHolderPin);   rightPopcornHolder.write(0);
-  
-  leftArm.attach(leftArmServoPin);                    closeLeftArm();
-  rightArm.attach(rightArmServoPin);                  closeRightArm();
-  
-  leftDoor.attach(leftDoorServoPin);
-  rightDoor.attach(rightDoorServoPin);
+  door.attach(doorServoPin);
 }
 
 void VisionBase::moveForward(int distance, int pwmv, int nextState)
@@ -213,23 +221,17 @@ bool VisionBase::frontDetected()
 void VisionBase::doLoop()
 {   
   switch(state)
-  {/*
+  {
     case 0: 
-      openLeftClaw();
-      openRightClaw();
       moveForward(30, 50,1);
       break; 
     case 1: 
-      grabLeftClaw();
-      grabRightClaw();
-      state.wait(1000,STATE_NEXT);
+      turnLeft(90, 50,2);
       break;
     case 2:
-      riseLift();
-      state.wait(100,STATE_STOP);
-      break; */
+      break; 
     
-    case 0: 
+/*    case 0: 
       moveForward(45, 50, STATE_NEXT);
       break;
     case 1:
@@ -265,7 +267,7 @@ void VisionBase::doLoop()
      // openLeftClaw();
    //   openRightClaw();
       moveForward(21, 50,STATE_NEXT);
-      break;
+      break;*/
   /*  case 11: 
       grabLeftClaw();
       grabRightClaw();
@@ -358,74 +360,29 @@ void VisionBase::grabRightArm()
   rightArm.write(40);
 }
  
-void VisionBase::openLeftClaw()
+void VisionBase::openClaw()
 {
-  leftClaw.write(150);
+  claw.write(150);
 }
 
-void VisionBase::closeLeftClaw()
+void VisionBase::closeClaw()
 {
-  leftClaw.write(12);
+  claw.write(12);
 }
 
-void VisionBase::grabLeftClaw()
+void VisionBase::grabClaw()
 {
-  leftClaw.write(40);
-}
-
-void VisionBase::openRightClaw()
-{
-  rightClaw.write(5);
-}
-
-void VisionBase::closeRightClaw()
-{
-  rightClaw.write(138);
-}
-
-void VisionBase::grabRightClaw()
-{
-  rightClaw.write(115);
+  claw.write(40);
 }
     
-void VisionBase::holdLeftLimitator()
+void VisionBase::openDoow()    // unimplemented
 {
-  leftLimitator.write(13);
+  door.write(180);
 }
 
-void VisionBase::releaseLeftLimitator()
+void VisionBase::closeDoor()    // unimplemented
 {
-  leftLimitator.write(40);
-}
-
-void VisionBase::holdRightLimitator()
-{
-  rightLimitator.write(97);
-}
-
-void VisionBase::releaseRightLimitator()
-{
-  rightLimitator.write(60);
-}
-
-void VisionBase::openLeftDoow()    // unimplemented
-{
-  leftDoor.write(180);
-}
-
-void VisionBase::closeLeftDoor()    // unimplemented
-{
-  leftDoor.write(0);
-}
-
-void VisionBase::openRightDoor()    // unimplemented
-{
-  rightDoor.write(0);
-}
-
-void VisionBase::closeRightDoor()    // unimplemented
-{
-  rightDoor.write(0);
+  door.write(0);
 }
   
 void VisionBase::releaseLeftPopcorn()

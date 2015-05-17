@@ -56,14 +56,8 @@ class VisionBase {
     void openLeftArm();     void closeLeftArm();     void grabLeftArm();
     void openRightArm();    void closeRightArm();    void grabRightArm();
     
-    void openLeftClaw();     void closeLeftClaw();     void grabLeftClaw();
-    void openRightClaw();    void closeRightClaw();    void grabRightClaw();
-    
-    void holdLeftLimitator();     void releaseLeftLimitator();
-    void holdRightLimitator();    void releaseRightLimitator();
-
-    void openLeftDoow();     void closeLeftDoor();
-    void openRightDoor();    void closeRightDoor();
+    void openClaw();     void closeClaw();     void grabClaw(); 
+    void openDoow();     void closeDoor();
     
     void releaseLeftPopcorn();
     void releaseRightPopcorn();
@@ -82,13 +76,11 @@ class VisionBase {
     VisionEncoders leftEncoder, rightEncoder;
     VisionState state;
     
-    Servo leftClaw, rightClaw,
-          leftLimitator, rightLimitator,
+    Servo claw, door,
           leftPopcornHolder, rightPopcornHolder,
-          leftArm, rightArm,
-          leftDoor, rightDoor;
+          leftArm, rightArm;
           
-    VisionSensor frontLeftSensor, frontRightSensor, liftLimitatorSensor;
+    VisionSensor frontLeftSensor, frontRightSensor, liftLimitatorSensor, sideButton;
     
     int pwmValue = 0;
     int directionMovement;
