@@ -264,32 +264,16 @@ void VisionBase::doLoop()
 {   
   switch(state)
   {
-    case 0: 
-      moveForward(45, 30, STATE_NEXT);
-      break;
-    case 1:
-      turnRight(70, 30, STATE_NEXT);
-      break;
-    case 2: 
-      moveBackward(67, 30, STATE_NEXT);
-      break;
-    case 3:
-      turnRight(25, 30, STATE_NEXT);
-      break;
-    //calibrare
-    case 4:
-      directionMovement = -1;
-      leftMotor.moveBackward(30);
-      rightMotor.moveBackward(30);
-      state.wait(2000, STATE_NEXT);
-      break;
-    case 5:
-      leftEncoder.resetPosition();
-      rightEncoder.resetPosition();
-      leftMotor.stopMotor();
-      rightMotor.stopMotor();
-      state.wait(3000, STATE_NEXT);
-      break;
+    case 0: moveForward(60, 30, STATE_NEXT);break;
+    case 1: turnLeft(90, 30, STATE_NEXT);break;
+    case 2: moveForward(90, 30, STATE_NEXT);break;
+    case 3: moveBackward(90, 30, STATE_NEXT);break;
+    case 4: turnLeft(190, 30, STATE_NEXT);break;
+    case 5: moveForward(40, 30, STATE_NEXT);break;
+    case 6: turnLeft(80, 30, STATE_NEXT);break;
+    case 7: moveForward(50, 30, STATE_NEXT);break;
+    case 8: turnRight(90, 30, STATE_NEXT);break;
+    case 9: moveForward(50, 30, STATE_NEXT);break;
     case STATE_STOP:
       break;
     default:
