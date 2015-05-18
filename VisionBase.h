@@ -50,14 +50,15 @@ class VisionBase {
     void update();
             
     void attachServoz();
+    int getState(int stateToGet, int originalState);
     
     /************************************************** Servoz ***************************************************/
     
     void openLeftArm();     void closeLeftArm();     void grabLeftArm();
     void openRightArm();    void closeRightArm();    void grabRightArm();
     
-    void openClaw();     void closeClaw();     void grabClaw(); 
-    void openDoow();     void closeDoor();
+    void openClaw();     void closeClaw();
+    void openDoor();     void closeDoor();   void unlockDoor();
     
     void releaseLeftPopcorn();
     void releaseRightPopcorn();
@@ -65,16 +66,17 @@ class VisionBase {
     void gatherPopcorn();
     void stopGatherPopcorn();
     
-    void riseLift();
-    void lowerLift();
-    void stopLift();
+    void riseLift(int stateNext);
+    void halfLowerLift(int stateNext);
+    void lowerLift(int stateNext);
+    void stopLift(int stateNext);
     
     /******************************************************************************************************/
         
   public:
     VisionDC leftMotor, rightMotor;
     VisionEncoders leftEncoder, rightEncoder;
-    VisionState state;
+    VisionState state, deviceState;
     
     Servo claw, door,
           leftPopcornHolder, rightPopcornHolder,

@@ -24,12 +24,12 @@ void setup()
   
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
-  while(startButton.detect());
+ // while(startButton.detect());
   
   Serial.begin(115200);
   timeUpTimer = 0;
-  base.init();
   delay(50);
+  base.init();
   stoppedEverything = false;
 }
 
