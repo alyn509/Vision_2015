@@ -87,6 +87,7 @@ class VisionBase {
     int pwmValue = 0;
     int directionMovement;
     int stateBeforePause;
+    int sideGreen;
     float lastPositionLeft = 0;
     float lastPositionRight = 0;
     

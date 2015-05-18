@@ -2,7 +2,7 @@
 
 void VisionBase::init()
 {  
-  sideButton.initPin(startButtonPin);
+  sideButton.initPin(sideButtonPin);
   sideButton.setAsPullup();
   
   frontLeftSensor.initPin(frontLeftSensorPin);
@@ -10,13 +10,22 @@ void VisionBase::init()
   
   liftLimitatorSensor.initPin(liftLimitatorSensorPin);
   liftLimitatorSensor.setAsPullup();
-   
+  
+  sideGreen = !sideButton.detect();
+  if (sideGreen) {
   leftMotor.init(leftMotorFw, leftMotorBw);
   rightMotor.init(rightMotorFw, rightMotorBw);
   
   leftEncoder.init(leftEncoderStepPin);
   rightEncoder.init(rightEncoderStepPin); 
-    
+  } else {
+  rightMotor.init(leftMotorFw, leftMotorBw);
+  leftMotor.init(rightMotorFw, rightMotorBw);
+  
+  rightEncoder.init(leftEncoderStepPin);
+  leftEncoder.init(rightEncoderStepPin);
+  }
+  
   pinMode(popCornGrabberDCPin, OUTPUT);
   pinMode(upLiftPin, OUTPUT);
   pinMode(downLiftPin, OUTPUT);
@@ -251,12 +260,7 @@ void VisionBase::doLoop()
 {   
   switch(state)
   {
-    #ifdef GREEN_START
-    case 0:  moveForward(59, 30, STATE_NEXT);break;
-    #endif
-    #ifdef YELLOW_START
-    case 0:  moveForward(60, 30, STATE_NEXT);break;
-    #endif
+    case 0:  if (sideGreen) moveForward(59, 30, STATE_NEXT) else moveForward(60, 30, STATE_NEXT);break;
     case 1:  turnLeft(90, 30, STATE_NEXT);break;
     case 2:  moveForward(93, 30, STATE_NEXT);break;
     case 3:  deviceState = 10; state.wait(500, STATE_NEXT);break;
