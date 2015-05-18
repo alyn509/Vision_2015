@@ -11,8 +11,8 @@ void VisionBase::init()
   liftLimitatorSensor.initPin(liftLimitatorSensorPin);
   liftLimitatorSensor.setAsPullup();
   
-  sideGreen = !sideButton.detect();
-  if (sideGreen) {
+  sideGreen = sideButton.detect();
+  if (!sideGreen) {
   leftMotor.init(leftMotorFw, leftMotorBw);
   rightMotor.init(rightMotorFw, rightMotorBw);
   
@@ -260,7 +260,7 @@ void VisionBase::doLoop()
 {   
   switch(state)
   {
-    case 0:  if (sideGreen) moveForward(59, 30, STATE_NEXT) else moveForward(60, 30, STATE_NEXT);break;
+    case 0:  if (sideGreen) moveForward(59, 30, STATE_NEXT); else moveForward(60, 30, STATE_NEXT);break;
     case 1:  turnLeft(90, 30, STATE_NEXT);break;
     case 2:  moveForward(93, 30, STATE_NEXT);break;
     case 3:  deviceState = 10; state.wait(500, STATE_NEXT);break;
@@ -283,9 +283,9 @@ void VisionBase::doLoop()
     case 20: closeDoor(); moveForward(70, 30, STATE_NEXT);break;
     case 21: turnRight(35, 30, STATE_NEXT);break;
     case 22: moveBackward(8, 30, STATE_NEXT);break;
-    case 23: turnLeft(38, 30, STATE_NEXT);break;
+    case 23: if (sideGreen) turnLeft(36, 30, STATE_NEXT); else turnLeft(38, 30, STATE_NEXT);break;
     case 24: moveForward(25, 30, STATE_NEXT);break;
-    case 25: closeClaw();
+    case 25: //closeClaw();
              state.wait(200, STATE_NEXT);break;
     case 26: openLeftArm();
              state.wait(200, STATE_NEXT);break;
@@ -296,13 +296,12 @@ void VisionBase::doLoop()
     case 30: openLeftArm();
              state.wait(100, STATE_NEXT);break;
     case 31: moveBackward(20, 30, STATE_NEXT);break;
-    case 32: turnRight(60, 30, STATE_NEXT);break;
-    case 33: moveForward(60, 30, STATE_NEXT);break;
-    case 34: turnRight(30, 30, STATE_NEXT);break;
-    case 35: moveForward(30, 30, STATE_NEXT);break;
-    case 36: turnLeft(90, 30, STATE_NEXT);break;
-    case 37: moveForward(30, 30, STATE_NEXT);break;
-    case 38: openClaw(); moveBackward(30, 30, STATE_NEXT);break;
+    case 32: turnRight(90, 30, STATE_NEXT);break;
+    case 33: moveBackward(15, 30, STATE_NEXT);break;
+    case 34: moveForward(40, 30, STATE_NEXT);break;
+    case 35: turnRight(97, 30, STATE_NEXT);break;
+    case 36: moveForward(175, 50, STATE_NEXT);break;
+    case 37: moveBackward(25, 30, STATE_NEXT);break;
     /************************************************************************************************************************/
     
  
