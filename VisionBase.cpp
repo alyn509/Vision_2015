@@ -274,8 +274,8 @@ void VisionBase::doLoop()
     case 20: closeDoor(); moveForward(70, 30, STATE_NEXT);break;
     case 21: turnRight(35, 30, STATE_NEXT);break;
     case 22: moveBackward(8, 30, STATE_NEXT);break;
-    case 23: turnLeft(30, 30, STATE_NEXT);break;
-    case 24: moveForward(30, 30, STATE_NEXT);break;
+    case 23: turnLeft(38, 30, STATE_NEXT);break;
+    case 24: moveForward(25, 30, STATE_NEXT);break;
     case 25: closeClaw();
              state.wait(200, STATE_NEXT);break;
     case 26: openLeftArm();
