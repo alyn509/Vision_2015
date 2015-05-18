@@ -27,7 +27,9 @@ const int popCornGrabberDCPin = 4;           // dc rotating continous
 const int upLiftPin = 2;                     // bring lift up
 const int downLiftPin = 3;                   // bring lift down
 
-
+//#define YELLOW_START
+#define GREEN_START
+#ifdef YELLOW_START
 /******************************************************* Movement motors ********************************************************/
 const int leftMotorFw = 10;
 const int leftMotorBw = 11;
@@ -39,6 +41,21 @@ const int rightMotorBw = 9;
 
 const int leftEncoderStepPin = 6;
 const int rightEncoderStepPin = 7;
+#endif
+#ifdef GREEN_START
+/******************************************************* Movement motors ********************************************************/
+const int leftMotorFw = 8;
+const int leftMotorBw = 9;
+
+const int rightMotorFw = 10;
+const int rightMotorBw = 11;
+
+/******************************************************* Encoders ********************************************************/
+
+const int leftEncoderStepPin = 7;
+const int rightEncoderStepPin = 6;
+#endif
+
 
 #endif
 

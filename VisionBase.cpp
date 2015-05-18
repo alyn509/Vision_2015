@@ -251,7 +251,12 @@ void VisionBase::doLoop()
 {   
   switch(state)
   {
+    #ifdef GREEN_START
+    case 0:  moveForward(59, 30, STATE_NEXT);break;
+    #endif
+    #ifdef YELLOW_START
     case 0:  moveForward(60, 30, STATE_NEXT);break;
+    #endif
     case 1:  turnLeft(90, 30, STATE_NEXT);break;
     case 2:  moveForward(93, 30, STATE_NEXT);break;
     case 3:  deviceState = 10; state.wait(500, STATE_NEXT);break;
