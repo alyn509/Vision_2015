@@ -269,15 +269,37 @@ bool VisionBase::detected()
   return (frontDetected() && directionMovement == FRONT) || (backDetected() && directionMovement == BACK);
 }
 
+void VisionBase::openArm() {
+  if (sideGreen) openLeftArm(); else openRightArm();
+}
+void VisionBase::closeArm() {
+  if (sideGreen) closeLeftArm(); else closeRightArm();
+}
+void VisionBase::grabArm() {
+  if (sideGreen) grabLeftArm(); else grabRightArm();
+}
+
+void VisionBase::openOtherArm() {
+  if (!sideGreen) openLeftArm(); else openRightArm();
+}
+void VisionBase::closeOtherArm() {
+  if (!sideGreen) closeLeftArm(); else closeRightArm();
+}
+void VisionBase::grabOtherArm() {
+  if (!sideGreen) grabLeftArm(); else grabRightArm();
+}
+
 void VisionBase::doLoop()
 {   
   switch(state)
   {
-    case 0:  if (sideGreen) moveForward(59, 30, STATE_NEXT); else moveForward(60, 30, STATE_NEXT);break;
+    case 0:  closeLeftArm(); closeRightArm(); if (sideGreen) moveForward(59, 30, STATE_NEXT); else moveForward(60, 30, STATE_NEXT);break;
     case 1:  turnLeft(90, 30, STATE_NEXT);break;
-    case 2:  moveForward(93, 30, STATE_NEXT);break;
-    case 3:  deviceState = 10; state.wait(500, STATE_NEXT);break;
-    case 4:  moveBackward(93, 30, STATE_NEXT);break;
+    case 2:  openArm(); moveForward(73, 30, 201);break;
+    case 201: grabArm(); state.wait(500, STATE_NEXT);break;
+    case 202: ignoredSensors = true; moveForward(20, 30, 3);break;
+    case 3:  closeArm(); deviceState = 10; state.wait(500, STATE_NEXT);break;
+    case 4:  ignoredSensors = false; moveBackward(93, 30, STATE_NEXT);break;
     case 5:  turnLeft(190, 30, STATE_NEXT);break;
     case 6:  moveForward(40, 30, STATE_NEXT);break;
     case 7:  deviceState = 21; state.wait(1000, STATE_NEXT);break;
@@ -300,21 +322,22 @@ void VisionBase::doLoop()
     case 24: moveForward(25, 30, STATE_NEXT);break;
     case 25: //closeClaw();
              state.wait(200, STATE_NEXT);break;
-    case 26: openLeftArm();
+    case 26: openOtherArm();
              state.wait(200, STATE_NEXT);break;
     case 27: moveBackward(30, 30, STATE_NEXT);break;
-    case 28: closeLeftArm();
+    case 28: closeOtherArm();
              state.wait(100, STATE_NEXT);break;
     case 29: moveBackward(30, 30, STATE_NEXT);break;
-    case 30: openLeftArm();
+    case 30: openOtherArm();
              state.wait(100, STATE_NEXT);break;
     case 31: moveBackward(20, 30, STATE_NEXT);break;
-    case 32: turnRight(90, 30, STATE_NEXT);break;
-    case 33: moveBackward(15, 30, STATE_NEXT);break;
-    case 34: moveForward(40, 30, STATE_NEXT);break;
+    case 32: closeOtherArm(); turnRight(90, 30, STATE_NEXT);break;
+    case 33: ignoredSensors = true; moveBackward(15, 30, STATE_NEXT);break;
+    case 34: ignoredSensors = false; moveForward(40, 30, STATE_NEXT);break;
     case 35: turnRight(97, 30, STATE_NEXT);break;
     case 36: moveForward(175, 50, STATE_NEXT);break;
-    case 37: moveBackward(25, 30, STATE_NEXT);break;
+    case 37: ignoredSensors = true; moveForward(10, 50, STATE_NEXT);break;
+    case 38: openArm(); ignoredSensors = false; moveBackward(25, 30, STATE_NEXT);break;
     /************************************************************************************************************************/
     
  
@@ -366,32 +389,32 @@ void VisionBase::stopNow()
 /********************************************************* Servoz *********************************************************/
 void VisionBase::openLeftArm()
 {
-  leftArm.write(30);
+  leftArm.write(90);
 }
 
 void VisionBase::closeLeftArm()
 {
-  leftArm.write(110);
+  leftArm.write(153);
 }
 
 void VisionBase::grabLeftArm()
 {
-  leftArm.write(90);
+  leftArm.write(60);
 }
 
 void VisionBase::openRightArm()
 {
-  rightArm.write(100);
+  rightArm.write(105);
 }
 
 void VisionBase::closeRightArm()
 {
-  rightArm.write(20);
+  rightArm.write(35);
 }
 
 void VisionBase::grabRightArm()
 {
-  rightArm.write(40);
+  rightArm.write(135);
 }
  
 void VisionBase::openClaw()

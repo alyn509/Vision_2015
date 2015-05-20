@@ -14,8 +14,8 @@ const int sideButtonPin = 53;
 
 /******************************************************* Device Motors ********************************************************/
 
-const int leftArmServoPin = 30;            // left arm               110 inside   -    30 clappers    -    90 popcorn glass 
-const int rightArmServoPin = 24;           // right arm               20 inside   -   100 clappers    -    40 popcorn glass
+const int leftArmServoPin = 30;            // left arm               153 inside   -    90 clappers - 60 release carpet
+const int rightArmServoPin = 32;           // right arm               35 inside   -   105 clappers - 135 release carpet
 
 const int clawServoPin = 28;           // Claw                        25 closed   -    100 opened
 const int doorServoPin = 22;           // door opener                 70 closed   -   165 opened

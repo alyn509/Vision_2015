@@ -58,6 +58,8 @@ class VisionBase {
     
     void openLeftArm();     void closeLeftArm();     void grabLeftArm();
     void openRightArm();    void closeRightArm();    void grabRightArm();
+    void openArm();         void closeArm();         void grabArm();
+    void openOtherArm();    void closeOtherArm();    void grabOtherArm();
     
     void openClaw();     void closeClaw();
     void openDoor();     void closeDoor();   void unlockDoor();
