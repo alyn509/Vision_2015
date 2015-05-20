@@ -7,6 +7,9 @@ void VisionBase::init()
   
   frontLeftSensor.initPin(frontLeftSensorPin);
   frontRightSensor.initPin(frontRightSensorPin);
+  backLeftSensor.initPin(backLeftSensorPin);
+  backMidSensor.initPin(backMidSensorPin);
+  backRightSensor.initPin(backRightSensorPin);
   
   liftLimitatorSensor.initPin(liftLimitatorSensorPin);
   liftLimitatorSensor.setAsPullup();
@@ -254,6 +257,16 @@ void VisionBase::update()
 bool VisionBase::frontDetected()
 {
   return frontLeftSensor.detect() || frontRightSensor.detect();
+}
+
+bool VisionBase::backDetected()
+{
+  return backLeftSensor.detect() || backMidSensor.detect() || backRightSensor.detect();
+}
+
+bool VisionBase::detected()
+{
+  return (frontDetected() && directionMovement == FRONT) || (backDetected() && directionMovement == BACK);
 }
 
 void VisionBase::doLoop()

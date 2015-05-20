@@ -31,6 +31,8 @@ class VisionBase {
     void moveBackward(int distance,int pwm, int nextState);
     
     boolean frontDetected();
+    boolean backDetected();
+    boolean detected();
     
     void turnLeft(int angle,int pwmv, int nextState);
     void turnRight(int angle,int pwmv, int nextState);
@@ -82,7 +84,7 @@ class VisionBase {
           leftPopcornHolder, rightPopcornHolder,
           leftArm, rightArm;
           
-    VisionSensor frontLeftSensor, frontRightSensor, liftLimitatorSensor, sideButton;
+    VisionSensor frontLeftSensor, frontRightSensor, backLeftSensor, backMidSensor, backRightSensor, liftLimitatorSensor, sideButton;
     
     int pwmValue = 0;
     int directionMovement;

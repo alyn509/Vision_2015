@@ -3,10 +3,13 @@
   
 /******************************************************* Sensors & buttons ********************************************************/
 
-const int frontRightSensorPin = 99;
-const int frontLeftSensorPin = 99;
+const int frontRightSensorPin = A10;
+const int frontLeftSensorPin = A9;
+const int backLeftSensorPin = A11;
+const int backMidSensorPin = A12;
+const int backRightSensorPin = A8;
 
-const int startButtonPin = 2;
+const int startButtonPin = A1;
 const int sideButtonPin = 53;
 
 /******************************************************* Device Motors ********************************************************/

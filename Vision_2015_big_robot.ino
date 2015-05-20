@@ -15,17 +15,18 @@ VisionBase base;
 elapsedMillis timeUpTimer, enemyTimer;
 boolean stoppedEverything = true; 
 VisionState state;
-
 VisionSensor startButton;
+
 void setup()
 {   
   pinMode(3, OUTPUT);
-  digitalWrite(3, LOW);    // we set pin 3 as GND.. because of Claudiu
-  
+  digitalWrite(3, LOW);    // side sensor pair
+  pinMode(A0, OUTPUT);
+  digitalWrite(A0, LOW);    // start sensor pair
+
   startButton.initPin(startButtonPin);
   startButton.setAsPullup();
- // while(startButton.detect());
-  
+  while(startButton.detect());
   Serial.begin(115200);
   timeUpTimer = 0;
   delay(50);
@@ -55,7 +56,7 @@ void loop()
 
 void testIfTimeUp()
 {
-  if(timeUpTimer == NINETYSECONDS)
+  if(timeUpTimer >= NINETYSECONDS)
     timeIsUpStopEverything();
 }
 
@@ -70,11 +71,11 @@ void checkForObstacle()
 {
   if(!base.isStopped)
   {
-    if(base.frontDetected() == true ) 
+    if(base.detected() == true)
       enemyTimer = 0;
-    if(base.frontDetected() == true && !base.isPaused && !base.ignoredSensors)   
+    if(base.detected() == true && !base.isPaused && !base.ignoredSensors)   
       base.pause();
-    else if(base.frontDetected() == false && base.isPaused && enemyTimer > 500L)
+    else if(base.detected() == false && base.isPaused && enemyTimer > 500L)
       base.unpause();
   }
 }
