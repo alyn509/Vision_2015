@@ -317,8 +317,8 @@ void VisionBase::doLoop()
     case 19: deviceState = 30; turnRight(150, 30, STATE_NEXT);break;
     case 20: closeDoor(); if (sideGreen) moveForward(69, 30, STATE_NEXT); else moveForward(70, 30, STATE_NEXT);break;
     case 21: turnRight(35, 30, STATE_NEXT);break;
-    case 22: if (sideGreen) moveBackward(19, 30, STATE_NEXT); else moveBackward(17, 30, STATE_NEXT); break;
-    case 23: if (sideGreen) turnLeft(36, 30, STATE_NEXT); else turnLeft(38, 30, STATE_NEXT);break;
+    case 22: ignoredSensors = true; if (sideGreen) moveBackward(19, 30, STATE_NEXT); else moveBackward(17, 30, STATE_NEXT); break;
+    case 23: ignoredSensors = false; if (sideGreen) turnLeft(36, 30, STATE_NEXT); else turnLeft(38, 30, STATE_NEXT);break;
     case 24: if (sideGreen) moveForward(37, 30, STATE_NEXT); else moveForward(38, 30, STATE_NEXT);break;
     case 25: //closeClaw();
              state.wait(200, STATE_NEXT);break;
