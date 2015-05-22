@@ -3,8 +3,8 @@
   
 /******************************************************* Sensors & buttons ********************************************************/
 
-const int frontRightSensorPin = A10;
-const int frontLeftSensorPin = A9;
+const int frontRightSensorPin = A9;
+const int frontLeftSensorPin = A10;
 const int backLeftSensorPin = A11;
 const int backMidSensorPin = A12;
 const int backRightSensorPin = A8;
