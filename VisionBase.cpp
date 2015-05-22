@@ -264,9 +264,22 @@ bool VisionBase::backDetected()
   return backLeftSensor.detect() || backMidSensor.detect() || backRightSensor.detect();
 }
 
+bool VisionBase::leftDetected()
+{
+  return backLeftSensor.detect() || frontRightSensor.detect();
+}
+
+bool VisionBase::rightDetected()
+{
+  return frontLeftSensor.detect() || backRightSensor.detect();
+}
+
 bool VisionBase::detected()
 {
-  return (frontDetected() && directionMovement == FRONT) || (backDetected() && directionMovement == BACK);
+  return ((frontDetected() && directionMovement == FRONT) || 
+        (backDetected() && directionMovement == BACK) || 
+        (leftDetected() && directionMovement == LEFT) || 
+        (rightDetected() && directionMovement == RIGHT) );
 }
 
 void VisionBase::openArm() {

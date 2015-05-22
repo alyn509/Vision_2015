@@ -32,6 +32,8 @@ class VisionBase {
     
     boolean frontDetected();
     boolean backDetected();
+    boolean leftDetected();
+    boolean rightDetected();
     boolean detected();
     
     void turnLeft(int angle,int pwmv, int nextState);
