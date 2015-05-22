@@ -300,7 +300,7 @@ void VisionBase::doLoop()
     case 202: ignoredSensors = true; moveForward(20, 30, 3);break;
     case 3:  closeArm(); deviceState = 10; state.wait(500, STATE_NEXT);break;
     case 4:  ignoredSensors = false; moveBackward(93, 30, STATE_NEXT);break;
-    case 5:  if (sideGreen) turnLeft(190, 30, STATE_NEXT); else turnLeft(200, 30, STATE_NEXT);break;
+    case 5:  if (sideGreen) turnLeft(187, 30, STATE_NEXT); else turnLeft(200, 30, STATE_NEXT);break;
     case 6:  moveForward(40, 30, STATE_NEXT);break;
     case 7:  deviceState = 21; state.wait(1000, STATE_NEXT);break;
     case 8:  if (sideGreen) turnLeft(80, 30, STATE_NEXT); else turnLeft(70, 30, STATE_NEXT);break;
@@ -314,12 +314,12 @@ void VisionBase::doLoop()
     case 16: openClaw(); state.wait(100, STATE_NEXT);break;
     case 17: openDoor(); state.wait(100, STATE_NEXT);break;    /// open door
     case 18: moveBackward(25, 30, STATE_NEXT);break;
-    case 19: deviceState = 30; turnRight(150, 30, STATE_NEXT);break;
+    case 19: deviceState = 30; if (sideGreen) turnRight(153, 30, STATE_NEXT); else turnRight(150, 30, STATE_NEXT); break;
     case 20: closeDoor(); if (sideGreen) moveForward(69, 30, STATE_NEXT); else moveForward(70, 30, STATE_NEXT);break;
     case 21: turnRight(35, 30, STATE_NEXT);break;
     case 22: ignoredSensors = true; if (sideGreen) moveBackward(19, 30, STATE_NEXT); else moveBackward(17, 30, STATE_NEXT); break;
     case 23: ignoredSensors = false; if (sideGreen) turnLeft(36, 30, STATE_NEXT); else turnLeft(38, 30, STATE_NEXT);break;
-    case 24: if (sideGreen) moveForward(37, 30, STATE_NEXT); else moveForward(38, 30, STATE_NEXT);break;
+    case 24: if (sideGreen) moveForward(43, 30, STATE_NEXT); else moveForward(38, 30, STATE_NEXT);break;
     case 25: //closeClaw();
              state.wait(200, STATE_NEXT);break;
     case 26: openOtherArm();
@@ -334,8 +334,8 @@ void VisionBase::doLoop()
     case 32: closeOtherArm(); turnRight(90, 30, STATE_NEXT);break;
     case 33: moveBackward(15, 30, STATE_NEXT);break;
     case 34: ignoredSensors = false; moveForward(40, 30, STATE_NEXT);break;
-    case 35: turnRight(97, 30, STATE_NEXT);break;
-    case 36: moveForward(178, 50, STATE_NEXT);break;
+    case 35: if (sideGreen) turnRight(97, 30, STATE_NEXT); else  turnRight(97, 28, STATE_NEXT);break;
+    case 36: if (sideGreen) moveForward(179, 50, STATE_NEXT); else moveForward(183, 50, STATE_NEXT);break;
     case 37: ignoredSensors = true; moveForward(10, 50, STATE_NEXT);break;
     case 38: openArm(); ignoredSensors = false; moveBackward(29, 30, STATE_NEXT);break;
     /************************************************************************************************************************/
