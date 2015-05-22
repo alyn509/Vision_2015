@@ -209,12 +209,6 @@ void VisionBase::unpause()
 int integral, last;
 void VisionBase::update()
 {
-  /*
-  Serial.print(" L: ");
-  Serial.print(leftEncoder.getPosition());
-  Serial.print(" R: ");
-  Serial.println(rightEncoder.getPosition());
- */
   int threshold = pwmValue - 10;
   int difference = leftEncoder.getPosition() - rightEncoder.getPosition();
   int deriv = difference - last;
@@ -276,10 +270,8 @@ bool VisionBase::rightDetected()
 
 bool VisionBase::detected()
 {
-  return ((frontDetected() && directionMovement == FRONT) || 
-        (backDetected() && directionMovement == BACK) || 
-        (leftDetected() && directionMovement == LEFT) || 
-        (rightDetected() && directionMovement == RIGHT) );
+  return (frontDetected() && directionMovement == FRONT) || 
+        (backDetected() && directionMovement == BACK);        
 }
 
 void VisionBase::openArm() {
@@ -304,53 +296,54 @@ void VisionBase::grabOtherArm() {
 
 void VisionBase::doLoop()
 {   
+  int spd = 35;
   switch(state)
   {
-    case 0:  closeLeftArm(); closeRightArm(); if (sideGreen) moveForward(59, 30, STATE_NEXT); else moveForward(59, 30, STATE_NEXT);break;
+    case 0:  closeLeftArm(); closeRightArm(); if (sideGreen) moveForward(59, spd, STATE_NEXT); else moveForward(59, spd, STATE_NEXT);break;
     case 1:  turnLeft(90, 30, STATE_NEXT);break;
-    case 2:  openArm(); moveForward(73, 30, 201);break;
+    case 2:  openArm(); moveForward(73, spd, 201);break;
     case 201: grabArm(); state.wait(500, STATE_NEXT);break;
-    case 202: ignoredSensors = true; moveForward(20, 30, 3);break;
+    case 202: ignoredSensors = true; moveForward(20, spd, 3);break;
     case 3:  closeArm(); deviceState = 10; state.wait(500, STATE_NEXT);break;
-    case 4:  ignoredSensors = false; moveBackward(93, 30, STATE_NEXT);break;
+    case 4:  ignoredSensors = false; moveBackward(93, spd, STATE_NEXT);break;
     case 5:  if (sideGreen) turnLeft(187, 30, STATE_NEXT); else turnLeft(200, 30, STATE_NEXT);break;
-    case 6:  moveForward(40, 30, STATE_NEXT);break;
+    case 6:  moveForward(40, spd, STATE_NEXT);break;
     case 7:  deviceState = 21; state.wait(1000, STATE_NEXT);break;
     case 8:  if (sideGreen) turnLeft(80, 30, STATE_NEXT); else turnLeft(70, 30, STATE_NEXT);break;
-    case 9:  moveForward(50, 30, STATE_NEXT);break;
+    case 9:  moveForward(50, spd, STATE_NEXT);break;
     case 10:  deviceState = 21; state.wait(1000, STATE_NEXT);break;
     case 11:  turnRight(120, 30, STATE_NEXT);break;
-    case 12:  moveForward(48, 30, STATE_NEXT);break;
+    case 12:  moveForward(48, spd, STATE_NEXT);break;
     case 13:  deviceState = 15; state.wait(1000, STATE_NEXT);break;
     case 14:  turnLeft(90, 30, STATE_NEXT);break;
-    case 15:  unlockDoor(); moveForward(12, 30, STATE_NEXT);break;
+    case 15:  unlockDoor(); moveForward(12, spd, STATE_NEXT);break;
     case 16: openClaw(); state.wait(100, STATE_NEXT);break;
     case 17: openDoor(); state.wait(100, STATE_NEXT);break;    /// open door
-    case 18: moveBackward(25, 30, STATE_NEXT);break;
+    case 18: moveBackward(25, spd, STATE_NEXT);break;
     case 19: deviceState = 30; if (sideGreen) turnRight(153, 30, STATE_NEXT); else turnRight(150, 30, STATE_NEXT); break;
-    case 20: closeDoor(); if (sideGreen) moveForward(69, 30, STATE_NEXT); else moveForward(70, 30, STATE_NEXT);break;
+    case 20: closeDoor(); if (sideGreen) moveForward(69, spd, STATE_NEXT); else moveForward(70, spd, STATE_NEXT);break;
     case 21: turnRight(35, 30, STATE_NEXT);break;
-    case 22: ignoredSensors = true; if (sideGreen) moveBackward(19, 30, STATE_NEXT); else moveBackward(17, 30, STATE_NEXT); break;
+    case 22: ignoredSensors = true; if (sideGreen) moveBackward(18, spd, STATE_NEXT); else moveBackward(19, spd, STATE_NEXT); break;
     case 23: ignoredSensors = false; if (sideGreen) turnLeft(36, 30, STATE_NEXT); else turnLeft(38, 30, STATE_NEXT);break;
-    case 24: if (sideGreen) moveForward(43, 30, STATE_NEXT); else moveForward(38, 30, STATE_NEXT);break;
+    case 24: if (sideGreen) moveForward(43, spd, STATE_NEXT); else moveForward(39, spd, STATE_NEXT);break;
     case 25: //closeClaw();
              state.wait(200, STATE_NEXT);break;
     case 26: openOtherArm();
              state.wait(200, STATE_NEXT);break;
-    case 27: moveBackward(30, 30, STATE_NEXT);break;
+    case 27: moveBackward(30, spd, STATE_NEXT);break;
     case 28: closeOtherArm();
              state.wait(100, STATE_NEXT);break;
-    case 29: moveBackward(30, 30, STATE_NEXT);break;
+    case 29: moveBackward(30, spd, STATE_NEXT);break;
     case 30: openOtherArm();ignoredSensors = true;
              state.wait(100, STATE_NEXT);break;
-    case 31: moveBackward(20, 30, STATE_NEXT);break;
+    case 31: moveBackward(20, spd, STATE_NEXT);break;
     case 32: closeOtherArm(); turnRight(90, 30, STATE_NEXT);break;
-    case 33: moveBackward(15, 30, STATE_NEXT);break;
-    case 34: ignoredSensors = false; moveForward(40, 30, STATE_NEXT);break;
-    case 35: if (sideGreen) turnRight(97, 30, STATE_NEXT); else  turnRight(97, 28, STATE_NEXT);break;
+    case 33: moveBackward(15, 50, STATE_NEXT);break;
+    case 34: ignoredSensors = false; moveForward(40, spd, STATE_NEXT);break;
+    case 35: if (sideGreen) turnRight(98, 30, STATE_NEXT); else  turnRight(95, 30, STATE_NEXT);break;
     case 36: if (sideGreen) moveForward(179, 50, STATE_NEXT); else moveForward(183, 50, STATE_NEXT);break;
-    case 37: ignoredSensors = true; moveForward(10, 50, STATE_NEXT);break;
-    case 38: openArm(); ignoredSensors = false; moveBackward(29, 30, STATE_NEXT);break;
+    case 37: ignoredSensors = true; moveForward(10, 40, STATE_NEXT);break;
+    case 38: openArm(); ignoredSensors = false; moveBackward(29, spd, STATE_NEXT);break;
     /************************************************************************************************************************/
     
  
